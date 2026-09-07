@@ -1,0 +1,1155 @@
+// Single source of truth for every product on the site.
+// Every listing, slider, category page and detail page derives from this array.
+
+export const productsData = [
+  {
+    "id": "furn-001",
+    "name": "Nordic Solid Teak King Bed",
+    "slug": "nordic-solid-teak-king-bed",
+    "category": "Beds & Mattresses",
+    "categorySlug": "beds-and-mattresses",
+    "subcategory": "King Size Bed",
+    "subcategorySlug": "king-size-bed",
+    "roomType": "Bedroom",
+    "roomSlug": "bedroom",
+    "price": 55000,
+    "originalPrice": 62000,
+    "discountPercent": 11,
+    "rating": 4.9,
+    "reviewCount": 128,
+    "inStock": true,
+    "isFeatured": true,
+    "isBestSeller": true,
+    "sizeLabel": "Large Size",
+    "createdAt": "2026-07-02",
+    "thumbnail": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=500",
+    "images": [
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=1000",
+      "https://images.unsplash.com/photo-1540518614846-7eded433c457?w=1000"
+    ],
+    "colors": [
+      {
+        "name": "Natural Teak",
+        "code": "#8B5A2B"
+      },
+      {
+        "name": "Dark Walnut",
+        "code": "#3D2314"
+      }
+    ],
+    "material": "Burma Teak Wood",
+    "dimensions": {
+      "width": "6.5 ft",
+      "length": "7 ft",
+      "height": "4 ft"
+    },
+    "shortDescription": "Burma Teak Wood — crafted for bedroom use.",
+    "tags": [
+      "Solid Wood",
+      "Luxury",
+      "Bedroom"
+    ]
+  },
+  {
+    "id": "furn-002",
+    "name": "Renox Luxury Dressing Table",
+    "slug": "renox-luxury-dressing-table",
+    "category": "Tables & Desks",
+    "categorySlug": "tables-and-desks",
+    "subcategory": "Dressing Table",
+    "subcategorySlug": "dressing-table",
+    "roomType": "Bedroom",
+    "roomSlug": "bedroom",
+    "price": 37000,
+    "originalPrice": 42000,
+    "discountPercent": 12,
+    "rating": 4.8,
+    "reviewCount": 94,
+    "inStock": true,
+    "isFeatured": true,
+    "isBestSeller": false,
+    "sizeLabel": "Medium Size",
+    "createdAt": "2026-07-11",
+    "thumbnail": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=500",
+    "images": [
+      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1000",
+      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1000"
+    ],
+    "colors": [
+      {
+        "name": "White + Green",
+        "code": "#059669"
+      },
+      {
+        "name": "White + Pink",
+        "code": "#F472B6"
+      }
+    ],
+    "material": "Engineering Wood & Glass",
+    "dimensions": {
+      "width": "3 ft",
+      "length": "1.5 ft",
+      "height": "6 ft"
+    },
+    "shortDescription": "Engineering Wood & Glass — crafted for bedroom use.",
+    "tags": [
+      "Modern",
+      "LED Mirror",
+      "Storage"
+    ]
+  },
+  {
+    "id": "furn-003",
+    "name": "Velvet Touch 3-Seater Sofa",
+    "slug": "velvet-touch-3-seater-sofa",
+    "category": "Sofa & Seating",
+    "categorySlug": "sofa-and-seating",
+    "subcategory": "3-Seater Sofa",
+    "subcategorySlug": "3-seater-sofa",
+    "roomType": "Living Room",
+    "roomSlug": "living-room",
+    "price": 48000,
+    "originalPrice": 55000,
+    "discountPercent": 13,
+    "rating": 4.7,
+    "reviewCount": 86,
+    "inStock": true,
+    "isFeatured": false,
+    "isBestSeller": true,
+    "sizeLabel": "Large Size",
+    "createdAt": "2026-06-18",
+    "thumbnail": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500",
+    "images": [
+      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1000",
+      "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=1000"
+    ],
+    "colors": [
+      {
+        "name": "Emerald Green",
+        "code": "#047857"
+      },
+      {
+        "name": "Navy Blue",
+        "code": "#1E3A8A"
+      },
+      {
+        "name": "Charcoal Gray",
+        "code": "#374151"
+      }
+    ],
+    "material": "Velvet Fabric & Oak Legs",
+    "dimensions": {
+      "width": "7 ft",
+      "length": "3 ft",
+      "height": "3 ft"
+    },
+    "shortDescription": "Velvet Fabric & Oak Legs — crafted for living room use.",
+    "tags": [
+      "Velvet",
+      "Comfort",
+      "Living Room"
+    ]
+  },
+  {
+    "id": "furn-004",
+    "name": "Minimalist Oak Dining Table",
+    "slug": "minimalist-oak-dining-table",
+    "category": "Dining Furniture",
+    "categorySlug": "dining-furniture",
+    "subcategory": "Dining Sets",
+    "subcategorySlug": "dining-sets",
+    "roomType": "Dining Room",
+    "roomSlug": "dining-room",
+    "price": 68000,
+    "originalPrice": 75000,
+    "discountPercent": 9,
+    "rating": 4.9,
+    "reviewCount": 112,
+    "inStock": true,
+    "isFeatured": true,
+    "isBestSeller": true,
+    "sizeLabel": "Large Size",
+    "createdAt": "2026-07-22",
+    "thumbnail": "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=500",
+    "images": [
+      "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=1000",
+      "https://images.unsplash.com/photo-1530018607912-eff2daa1bac4?w=1000"
+    ],
+    "colors": [
+      {
+        "name": "Natural Oak",
+        "code": "#D97706"
+      },
+      {
+        "name": "Ebony Black",
+        "code": "#111827"
+      }
+    ],
+    "material": "Solid White Oak Wood",
+    "dimensions": {
+      "width": "3.5 ft",
+      "length": "6 ft",
+      "height": "2.5 ft"
+    },
+    "shortDescription": "Solid White Oak Wood — crafted for dining room use.",
+    "tags": [
+      "6 Seater",
+      "Dining Table",
+      "Solid Wood"
+    ]
+  },
+  {
+    "id": "furn-005",
+    "name": "Ergonomic Mesh Executive Chair",
+    "slug": "ergonomic-mesh-executive-chair",
+    "category": "Office Furniture",
+    "categorySlug": "office-furniture",
+    "subcategory": "Office Chairs",
+    "subcategorySlug": "office-chairs",
+    "roomType": "Home Office",
+    "roomSlug": "home-office",
+    "price": 18500,
+    "originalPrice": 22000,
+    "discountPercent": 16,
+    "rating": 4.6,
+    "reviewCount": 75,
+    "inStock": true,
+    "isFeatured": false,
+    "isBestSeller": true,
+    "sizeLabel": "Standard",
+    "createdAt": "2026-05-30",
+    "thumbnail": "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?w=500",
+    "images": [
+      "https://images.unsplash.com/photo-1580481072645-022f9a6d8310?w=1000",
+      "https://images.unsplash.com/photo-1505797149-43b0069ec26b?w=1000"
+    ],
+    "colors": [
+      {
+        "name": "Matte Black",
+        "code": "#000000"
+      },
+      {
+        "name": "Space Gray",
+        "code": "#4B5563"
+      }
+    ],
+    "material": "Breathable Mesh & Nylon Base",
+    "dimensions": {
+      "width": "2 ft",
+      "length": "2 ft",
+      "height": "4 ft"
+    },
+    "shortDescription": "Breathable Mesh & Nylon Base — crafted for home office use.",
+    "tags": [
+      "Ergonomic",
+      "Office Chair",
+      "Adjustable"
+    ]
+  },
+  {
+    "id": "furn-006",
+    "name": "Modern Industrial Bookshelf",
+    "slug": "modern-industrial-bookshelf",
+    "category": "Storage & Shelves",
+    "categorySlug": "storage-and-shelves",
+    "subcategory": "Bookcases",
+    "subcategorySlug": "bookcases",
+    "roomType": "Living Room",
+    "roomSlug": "living-room",
+    "price": 24000,
+    "originalPrice": 28000,
+    "discountPercent": 14,
+    "rating": 4.5,
+    "reviewCount": 42,
+    "inStock": true,
+    "isFeatured": false,
+    "isBestSeller": false,
+    "sizeLabel": "Standard",
+    "createdAt": "2026-06-05",
+    "thumbnail": "https://images.unsplash.com/photo-1594620302200-9a762244a156?w=500",
+    "images": [
+      "https://images.unsplash.com/photo-1594620302200-9a762244a156?w=1000",
+      "https://images.unsplash.com/photo-1544717305-2782549b5136?w=1000"
+    ],
+    "colors": [
+      {
+        "name": "Rustic Brown",
+        "code": "#78350F"
+      },
+      {
+        "name": "Black Metal",
+        "code": "#1F2937"
+      }
+    ],
+    "material": "MDF Board & Powder Coated Steel",
+    "dimensions": {
+      "width": "1.2 ft",
+      "length": "3.5 ft",
+      "height": "6 ft"
+    },
+    "shortDescription": "MDF Board & Powder Coated Steel — crafted for living room use.",
+    "tags": [
+      "Industrial",
+      "Storage",
+      "Shelf"
+    ]
+  },
+  {
+    "id": "furn-007",
+    "name": "Luxury Marble Top Coffee Table",
+    "slug": "luxury-marble-top-coffee-table",
+    "category": "Tables & Desks",
+    "categorySlug": "tables-and-desks",
+    "subcategory": "Coffee Table",
+    "subcategorySlug": "coffee-table",
+    "roomType": "Living Room",
+    "roomSlug": "living-room",
+    "price": 29500,
+    "originalPrice": 34000,
+    "discountPercent": 13,
+    "rating": 4.8,
+    "reviewCount": 63,
+    "inStock": true,
+    "isFeatured": true,
+    "isBestSeller": false,
+    "sizeLabel": "Medium Size",
+    "createdAt": "2026-07-28",
+    "thumbnail": "https://images.unsplash.com/photo-1533779283484-8da4979d70c8?w=500",
+    "images": [
+      "https://images.unsplash.com/photo-1533779283484-8da4979d70c8?w=1000",
+      "https://images.unsplash.com/photo-1532323544230-7191fd51bc1b?w=1000"
+    ],
+    "colors": [
+      {
+        "name": "White Italian Marble",
+        "code": "#F9FAFB"
+      },
+      {
+        "name": "Black Marquina",
+        "code": "#111827"
+      }
+    ],
+    "material": "Italian Marble & Golden Stainless Steel",
+    "dimensions": {
+      "width": "2.5 ft",
+      "length": "4 ft",
+      "height": "1.5 ft"
+    },
+    "shortDescription": "Italian Marble & Golden Stainless Steel — crafted for living room use.",
+    "tags": [
+      "Marble",
+      "Luxury",
+      "Center Table"
+    ]
+  },
+  {
+    "id": "furn-008",
+    "name": "Contemporary TV Cabinet Console",
+    "slug": "contemporary-tv-cabinet-console",
+    "category": "Storage & Shelves",
+    "categorySlug": "storage-and-shelves",
+    "subcategory": "TV Units",
+    "subcategorySlug": "tv-units",
+    "roomType": "Living Room",
+    "roomSlug": "living-room",
+    "price": 32000,
+    "originalPrice": 36000,
+    "discountPercent": 11,
+    "rating": 4.7,
+    "reviewCount": 51,
+    "inStock": true,
+    "isFeatured": false,
+    "isBestSeller": false,
+    "sizeLabel": "Medium Size",
+    "createdAt": "2026-06-24",
+    "thumbnail": "https://images.unsplash.com/photo-1607400201889-565b1ee75f8e?w=500",
+    "images": [
+      "https://images.unsplash.com/photo-1607400201889-565b1ee75f8e?w=1000",
+      "https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=1000"
+    ],
+    "colors": [
+      {
+        "name": "Walnut & White",
+        "code": "#525252"
+      },
+      {
+        "name": "Oak & Gray",
+        "code": "#9CA3AF"
+      }
+    ],
+    "material": "Process Wood & Solid Wood Legs",
+    "dimensions": {
+      "width": "1.5 ft",
+      "length": "5.5 ft",
+      "height": "1.8 ft"
+    },
+    "shortDescription": "Process Wood & Solid Wood Legs — crafted for living room use.",
+    "tags": [
+      "TV Cabinet",
+      "Storage",
+      "Modern"
+    ]
+  },
+  {
+    "id": "furn-009",
+    "name": "Classic Wooden Wardrobe 4-Door",
+    "slug": "classic-wooden-wardrobe-4-door",
+    "category": "Storage & Shelves",
+    "categorySlug": "storage-and-shelves",
+    "subcategory": "Wardrobes",
+    "subcategorySlug": "wardrobes",
+    "roomType": "Bedroom",
+    "roomSlug": "bedroom",
+    "price": 72000,
+    "originalPrice": 82000,
+    "discountPercent": 12,
+    "rating": 4.9,
+    "reviewCount": 38,
+    "inStock": false,
+    "isFeatured": true,
+    "isBestSeller": false,
+    "sizeLabel": "Large Size",
+    "createdAt": "2026-05-14",
+    "thumbnail": "https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=500",
+    "images": [
+      "https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=1000",
+      "https://images.unsplash.com/photo-1558882224-dda166733046?w=1000"
+    ],
+    "colors": [
+      {
+        "name": "Mahogany Finish",
+        "code": "#451A03"
+      },
+      {
+        "name": "Classic Teak",
+        "code": "#B45309"
+      }
+    ],
+    "material": "Segun Wood & Veneer Board",
+    "dimensions": {
+      "width": "2 ft",
+      "length": "6.5 ft",
+      "height": "6.8 ft"
+    },
+    "shortDescription": "Segun Wood & Veneer Board — crafted for bedroom use.",
+    "tags": [
+      "Wardrobe",
+      "Solid Wood",
+      "Storage"
+    ]
+  },
+  {
+    "id": "furn-010",
+    "name": "Comfy Upholstered Armchair",
+    "slug": "comfy-upholstered-armchair",
+    "category": "Sofa & Seating",
+    "categorySlug": "sofa-and-seating",
+    "subcategory": "Armchairs",
+    "subcategorySlug": "armchairs",
+    "roomType": "Living Room",
+    "roomSlug": "living-room",
+    "price": 16500,
+    "originalPrice": 19000,
+    "discountPercent": 13,
+    "rating": 4.6,
+    "reviewCount": 89,
+    "inStock": true,
+    "isFeatured": false,
+    "isBestSeller": true,
+    "sizeLabel": "Standard",
+    "createdAt": "2026-08-01",
+    "thumbnail": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500",
+    "images": [
+      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1000",
+      "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=1000"
+    ],
+    "colors": [
+      {
+        "name": "Mustard Yellow",
+        "code": "#EAB308"
+      },
+      {
+        "name": "Beige Cream",
+        "code": "#FEF3C7"
+      }
+    ],
+    "material": "Linen Fabric & Beech Wood Legs",
+    "dimensions": {
+      "width": "2.8 ft",
+      "length": "2.8 ft",
+      "height": "3.2 ft"
+    },
+    "shortDescription": "Linen Fabric & Beech Wood Legs — crafted for living room use.",
+    "tags": [
+      "Armchair",
+      "Single Sofa",
+      "Comfort"
+    ]
+  },
+  {
+    "id": "furn-011",
+    "name": "Aynor 3-Door Steel Almirah",
+    "slug": "aynor-3-door-steel-almirah",
+    "category": "Storage & Shelves",
+    "categorySlug": "storage-and-shelves",
+    "subcategory": "Steel Almirahs",
+    "subcategorySlug": "steel-almirahs",
+    "roomType": "Bedroom",
+    "roomSlug": "bedroom",
+    "price": 33500,
+    "originalPrice": 38000,
+    "discountPercent": 12,
+    "rating": 4.6,
+    "reviewCount": 57,
+    "inStock": true,
+    "isFeatured": false,
+    "isBestSeller": true,
+    "sizeLabel": "Medium Size",
+    "createdAt": "2026-07-30",
+    "thumbnail": "https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=1200&q=80",
+      "https://images.unsplash.com/photo-1558882224-dda166733046?w=1200&q=80"
+    ],
+    "colors": [
+      {
+        "name": "Ivory White",
+        "code": "#F3F4F6"
+      },
+      {
+        "name": "Granada Pine",
+        "code": "#854D0E"
+      }
+    ],
+    "material": "Powder Coated Steel Sheet",
+    "dimensions": {
+      "width": "1.6 ft",
+      "length": "4 ft",
+      "height": "6.5 ft"
+    },
+    "shortDescription": "Powder Coated Steel Sheet — crafted for bedroom use.",
+    "tags": [
+      "Steel",
+      "Lockable",
+      "Wardrobe"
+    ]
+  },
+  {
+    "id": "furn-012",
+    "name": "Nexa Fabric L-Shape Sofa",
+    "slug": "nexa-fabric-l-shape-sofa",
+    "category": "Sofa & Seating",
+    "categorySlug": "sofa-and-seating",
+    "subcategory": "Corner Sofa",
+    "subcategorySlug": "corner-sofa",
+    "roomType": "Living Room",
+    "roomSlug": "living-room",
+    "price": 86000,
+    "originalPrice": 98000,
+    "discountPercent": 12,
+    "rating": 4.8,
+    "reviewCount": 64,
+    "inStock": true,
+    "isFeatured": true,
+    "isBestSeller": true,
+    "sizeLabel": "Large Size",
+    "createdAt": "2026-08-04",
+    "thumbnail": "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=1200&q=80",
+      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1200&q=80"
+    ],
+    "colors": [
+      {
+        "name": "Slate Grey",
+        "code": "#64748B"
+      },
+      {
+        "name": "Terracotta",
+        "code": "#C2593B"
+      }
+    ],
+    "material": "Foam Cushion & Engineered Hardwood Frame",
+    "dimensions": {
+      "width": "9 ft",
+      "length": "6 ft",
+      "height": "2.8 ft"
+    },
+    "shortDescription": "Foam Cushion & Engineered Hardwood Frame — crafted for living room use.",
+    "tags": [
+      "L-Shape",
+      "6 Seater",
+      "Fabric"
+    ]
+  },
+  {
+    "id": "furn-013",
+    "name": "Nordic Study Desk with Shelf",
+    "slug": "nordic-study-desk-with-shelf",
+    "category": "Tables & Desks",
+    "categorySlug": "tables-and-desks",
+    "subcategory": "Study Desk",
+    "subcategorySlug": "study-desk",
+    "roomType": "Home Office",
+    "roomSlug": "home-office",
+    "price": 15200,
+    "originalPrice": 17800,
+    "discountPercent": 15,
+    "rating": 4.5,
+    "reviewCount": 71,
+    "inStock": true,
+    "isFeatured": false,
+    "isBestSeller": false,
+    "sizeLabel": "Standard",
+    "createdAt": "2026-08-06",
+    "thumbnail": "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=1200&q=80",
+      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1200&q=80"
+    ],
+    "colors": [
+      {
+        "name": "Natural Oak",
+        "code": "#C89F6B"
+      },
+      {
+        "name": "Matte White",
+        "code": "#FFFFFF"
+      }
+    ],
+    "material": "Engineered Wood & Matte Steel Legs",
+    "dimensions": {
+      "width": "2 ft",
+      "length": "4 ft",
+      "height": "2.5 ft"
+    },
+    "shortDescription": "Engineered Wood & Matte Steel Legs — crafted for home office use.",
+    "tags": [
+      "Study Desk",
+      "Compact",
+      "Shelf"
+    ]
+  },
+  {
+    "id": "furn-014",
+    "name": "Tajon Multipurpose Rack",
+    "slug": "tajon-multipurpose-rack",
+    "category": "Storage & Shelves",
+    "categorySlug": "storage-and-shelves",
+    "subcategory": "Multipurpose Shelves",
+    "subcategorySlug": "multipurpose-shelves",
+    "roomType": "Kitchen",
+    "roomSlug": "kitchen",
+    "price": 3000,
+    "originalPrice": 4200,
+    "discountPercent": 29,
+    "rating": 4.3,
+    "reviewCount": 133,
+    "inStock": true,
+    "isFeatured": false,
+    "isBestSeller": true,
+    "sizeLabel": "Small Size",
+    "createdAt": "2026-08-09",
+    "thumbnail": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&q=80",
+      "https://images.unsplash.com/photo-1594620302200-9a762244a156?w=1200&q=80"
+    ],
+    "colors": [
+      {
+        "name": "Sky Blue",
+        "code": "#38BDF8"
+      },
+      {
+        "name": "Ivory",
+        "code": "#F5F5F4"
+      }
+    ],
+    "material": "ABS Plastic & Steel Frame",
+    "dimensions": {
+      "width": "1.2 ft",
+      "length": "2 ft",
+      "height": "4 ft"
+    },
+    "shortDescription": "ABS Plastic & Steel Frame — crafted for kitchen use.",
+    "tags": [
+      "Budget",
+      "Lightweight",
+      "4-Tier"
+    ]
+  },
+  {
+    "id": "furn-015",
+    "name": "Pylar Restaurant Table",
+    "slug": "pylar-restaurant-table",
+    "category": "Dining Furniture",
+    "categorySlug": "dining-furniture",
+    "subcategory": "Restaurant Table",
+    "subcategorySlug": "restaurant-table",
+    "roomType": "Dining Room",
+    "roomSlug": "dining-room",
+    "price": 8500,
+    "originalPrice": 10500,
+    "discountPercent": 19,
+    "rating": 4.4,
+    "reviewCount": 46,
+    "inStock": true,
+    "isFeatured": false,
+    "isBestSeller": false,
+    "sizeLabel": "Small Size",
+    "createdAt": "2026-07-19",
+    "thumbnail": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80",
+      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=80"
+    ],
+    "colors": [
+      {
+        "name": "Red Oak",
+        "code": "#9A3412"
+      },
+      {
+        "name": "Jet Black",
+        "code": "#111827"
+      }
+    ],
+    "material": "Compact Laminate Top & Cast Iron Base",
+    "dimensions": {
+      "width": "2.5 ft",
+      "length": "2.5 ft",
+      "height": "2.4 ft"
+    },
+    "shortDescription": "Compact Laminate Top & Cast Iron Base — crafted for dining room use.",
+    "tags": [
+      "Commercial",
+      "4 Seater",
+      "Heavy Base"
+    ]
+  },
+  {
+    "id": "furn-016",
+    "name": "Ravon Compact Dressing Table",
+    "slug": "ravon-compact-dressing-table",
+    "category": "Tables & Desks",
+    "categorySlug": "tables-and-desks",
+    "subcategory": "Dressing Table",
+    "subcategorySlug": "dressing-table",
+    "roomType": "Bedroom",
+    "roomSlug": "bedroom",
+    "price": 19850,
+    "originalPrice": 23000,
+    "discountPercent": 14,
+    "rating": 4.5,
+    "reviewCount": 58,
+    "inStock": true,
+    "isFeatured": false,
+    "isBestSeller": false,
+    "sizeLabel": "Standard",
+    "createdAt": "2026-07-08",
+    "thumbnail": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1200&q=80",
+      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1200&q=80"
+    ],
+    "colors": [
+      {
+        "name": "White & Antique",
+        "code": "#E7E5E4"
+      },
+      {
+        "name": "Walnut",
+        "code": "#5B3A21"
+      }
+    ],
+    "material": "Engineered Wood & Bevelled Mirror",
+    "dimensions": {
+      "width": "2.5 ft",
+      "length": "1.3 ft",
+      "height": "5.4 ft"
+    },
+    "shortDescription": "Engineered Wood & Bevelled Mirror — crafted for bedroom use.",
+    "tags": [
+      "Mirror",
+      "Drawer",
+      "Compact"
+    ]
+  },
+  {
+    "id": "furn-017",
+    "name": "ErgoWork Manager Desk",
+    "slug": "ergowork-manager-desk",
+    "category": "Office Furniture",
+    "categorySlug": "office-furniture",
+    "subcategory": "Executive Desk",
+    "subcategorySlug": "executive-desk",
+    "roomType": "Home Office",
+    "roomSlug": "home-office",
+    "price": 42000,
+    "originalPrice": 49000,
+    "discountPercent": 14,
+    "rating": 4.7,
+    "reviewCount": 33,
+    "inStock": true,
+    "isFeatured": true,
+    "isBestSeller": false,
+    "sizeLabel": "Medium Size",
+    "createdAt": "2026-06-28",
+    "thumbnail": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&q=80",
+      "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200&q=80"
+    ],
+    "colors": [
+      {
+        "name": "Espresso",
+        "code": "#4A2C17"
+      },
+      {
+        "name": "Light Maple",
+        "code": "#D8B992"
+      }
+    ],
+    "material": "Melamine Board & Cable Management Steel Frame",
+    "dimensions": {
+      "width": "2.6 ft",
+      "length": "5.5 ft",
+      "height": "2.5 ft"
+    },
+    "shortDescription": "Melamine Board & Cable Management Steel Frame — crafted for home office use.",
+    "tags": [
+      "Executive",
+      "Cable Ports",
+      "Drawer Unit"
+    ]
+  },
+  {
+    "id": "furn-018",
+    "name": "Academia Classroom Bench Desk",
+    "slug": "academia-classroom-bench-desk",
+    "category": "Classroom Furniture",
+    "categorySlug": "classroom-furniture",
+    "subcategory": "Bench & Desks",
+    "subcategorySlug": "bench-desks",
+    "roomType": "Classroom",
+    "roomSlug": "classroom",
+    "price": 7800,
+    "originalPrice": 9000,
+    "discountPercent": 13,
+    "rating": 4.2,
+    "reviewCount": 204,
+    "inStock": true,
+    "isFeatured": false,
+    "isBestSeller": true,
+    "sizeLabel": "Small Size",
+    "createdAt": "2026-06-12",
+    "thumbnail": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1200&q=80",
+      "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1200&q=80"
+    ],
+    "colors": [
+      {
+        "name": "Beech",
+        "code": "#D9B382"
+      },
+      {
+        "name": "Navy Frame",
+        "code": "#1E3A8A"
+      }
+    ],
+    "material": "Laminated Ply Top & MS Pipe Frame",
+    "dimensions": {
+      "width": "1.5 ft",
+      "length": "4 ft",
+      "height": "2.5 ft"
+    },
+    "shortDescription": "Laminated Ply Top & MS Pipe Frame — crafted for classroom use.",
+    "tags": [
+      "School",
+      "2 Seater",
+      "Durable"
+    ]
+  },
+  {
+    "id": "furn-019",
+    "name": "Academia Whiteboard 6ft",
+    "slug": "academia-whiteboard-6ft",
+    "category": "Classroom Furniture",
+    "categorySlug": "classroom-furniture",
+    "subcategory": "Boards",
+    "subcategorySlug": "boards",
+    "roomType": "Classroom",
+    "roomSlug": "classroom",
+    "price": 5400,
+    "originalPrice": 6500,
+    "discountPercent": 17,
+    "rating": 4.1,
+    "reviewCount": 88,
+    "inStock": true,
+    "isFeatured": false,
+    "isBestSeller": false,
+    "sizeLabel": "Small Size",
+    "createdAt": "2026-06-02",
+    "thumbnail": "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200&q=80",
+      "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=1200&q=80"
+    ],
+    "colors": [
+      {
+        "name": "White",
+        "code": "#FFFFFF"
+      },
+      {
+        "name": "Silver Trim",
+        "code": "#C0C0C0"
+      }
+    ],
+    "material": "Ceramic Steel Surface & Aluminium Trim",
+    "dimensions": {
+      "width": "0.15 ft",
+      "length": "6 ft",
+      "height": "4 ft"
+    },
+    "shortDescription": "Ceramic Steel Surface & Aluminium Trim — crafted for classroom use.",
+    "tags": [
+      "Magnetic",
+      "Wall Mount",
+      "Marker Tray"
+    ]
+  },
+  {
+    "id": "furn-020",
+    "name": "Patio Weatherproof Rattan Chair",
+    "slug": "patio-weatherproof-rattan-chair",
+    "category": "Outdoor Furniture",
+    "categorySlug": "outdoor-furniture",
+    "subcategory": "Outdoor Chairs",
+    "subcategorySlug": "outdoor-chairs",
+    "roomType": "Outdoor",
+    "roomSlug": "outdoor",
+    "price": 6400,
+    "originalPrice": 7800,
+    "discountPercent": 18,
+    "rating": 4.3,
+    "reviewCount": 52,
+    "inStock": true,
+    "isFeatured": false,
+    "isBestSeller": false,
+    "sizeLabel": "Small Size",
+    "createdAt": "2026-07-15",
+    "thumbnail": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80",
+      "https://images.unsplash.com/photo-1567016432779-094069958ea5?w=1200&q=80"
+    ],
+    "colors": [
+      {
+        "name": "Natural Rattan",
+        "code": "#B08D57"
+      },
+      {
+        "name": "Charcoal",
+        "code": "#374151"
+      }
+    ],
+    "material": "Synthetic Rattan & Aluminium Frame",
+    "dimensions": {
+      "width": "2.2 ft",
+      "length": "2.2 ft",
+      "height": "2.9 ft"
+    },
+    "shortDescription": "Synthetic Rattan & Aluminium Frame — crafted for outdoor use.",
+    "tags": [
+      "Weatherproof",
+      "Stackable",
+      "Balcony"
+    ]
+  },
+  {
+    "id": "furn-021",
+    "name": "Zen Tempered Glass Center Table",
+    "slug": "zen-tempered-glass-center-table",
+    "category": "Tables & Desks",
+    "categorySlug": "tables-and-desks",
+    "subcategory": "Coffee Table",
+    "subcategorySlug": "coffee-table",
+    "roomType": "Living Room",
+    "roomSlug": "living-room",
+    "price": 9500,
+    "originalPrice": 11500,
+    "discountPercent": 17,
+    "rating": 4.4,
+    "reviewCount": 67,
+    "inStock": true,
+    "isFeatured": false,
+    "isBestSeller": false,
+    "sizeLabel": "Small Size",
+    "createdAt": "2026-05-22",
+    "thumbnail": "https://images.unsplash.com/photo-1532323544230-7191fd51bc1b?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1532323544230-7191fd51bc1b?w=1200&q=80",
+      "https://images.unsplash.com/photo-1533779283484-8da4979d70c8?w=1200&q=80"
+    ],
+    "colors": [
+      {
+        "name": "Clear Glass",
+        "code": "#E5E7EB"
+      },
+      {
+        "name": "Smoked Glass",
+        "code": "#4B5563"
+      }
+    ],
+    "material": "8mm Tempered Glass & Chrome Steel",
+    "dimensions": {
+      "width": "2 ft",
+      "length": "3.5 ft",
+      "height": "1.4 ft"
+    },
+    "shortDescription": "8mm Tempered Glass & Chrome Steel — crafted for living room use.",
+    "tags": [
+      "Glass",
+      "Minimal",
+      "Center Table"
+    ]
+  },
+  {
+    "id": "furn-022",
+    "name": "Chef Pro Kitchen Cabinet",
+    "slug": "chef-pro-kitchen-cabinet",
+    "category": "Kitchen Furniture",
+    "categorySlug": "kitchen-furniture",
+    "subcategory": "Kitchen Cabinets",
+    "subcategorySlug": "kitchen-cabinets",
+    "roomType": "Kitchen",
+    "roomSlug": "kitchen",
+    "price": 26500,
+    "originalPrice": 31000,
+    "discountPercent": 15,
+    "rating": 4.6,
+    "reviewCount": 29,
+    "inStock": true,
+    "isFeatured": false,
+    "isBestSeller": false,
+    "sizeLabel": "Medium Size",
+    "createdAt": "2026-06-16",
+    "thumbnail": "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=1200&q=80",
+      "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?w=1200&q=80"
+    ],
+    "colors": [
+      {
+        "name": "Brushed Steel",
+        "code": "#9CA3AF"
+      }
+    ],
+    "material": "Stainless Steel 304 Grade",
+    "dimensions": {
+      "width": "1.8 ft",
+      "length": "4 ft",
+      "height": "3 ft"
+    },
+    "shortDescription": "Stainless Steel 304 Grade — crafted for kitchen use.",
+    "tags": [
+      "Rust Free",
+      "Hygienic",
+      "Deep Shelves"
+    ]
+  },
+  {
+    "id": "furn-023",
+    "name": "Kids Room Study Set",
+    "slug": "kids-room-study-set",
+    "category": "Classroom Furniture",
+    "categorySlug": "classroom-furniture",
+    "subcategory": "Kids Desk",
+    "subcategorySlug": "kids-desk",
+    "roomType": "Kids Room",
+    "roomSlug": "kids-room",
+    "price": 12800,
+    "originalPrice": 15500,
+    "discountPercent": 17,
+    "rating": 4.7,
+    "reviewCount": 41,
+    "inStock": true,
+    "isFeatured": true,
+    "isBestSeller": false,
+    "sizeLabel": "Standard",
+    "createdAt": "2026-08-11",
+    "thumbnail": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80",
+      "https://images.unsplash.com/photo-1571898237947-3d8ac16b0e83?w=1200&q=80"
+    ],
+    "colors": [
+      {
+        "name": "Sunny Yellow",
+        "code": "#FACC15"
+      },
+      {
+        "name": "Mint Green",
+        "code": "#6EE7B7"
+      }
+    ],
+    "material": "Non-toxic Painted MDF & Rounded Edges",
+    "dimensions": {
+      "width": "1.8 ft",
+      "length": "3.2 ft",
+      "height": "2.4 ft"
+    },
+    "shortDescription": "Non-toxic Painted MDF & Rounded Edges — crafted for kids room use.",
+    "tags": [
+      "Kids Safe",
+      "Chair Included",
+      "Colourful"
+    ]
+  },
+  {
+    "id": "furn-024",
+    "name": "Fortress Biometric Digital Safe",
+    "slug": "fortress-biometric-digital-safe",
+    "category": "Storage & Shelves",
+    "categorySlug": "storage-and-shelves",
+    "subcategory": "Digital Lockers",
+    "subcategorySlug": "digital-lockers",
+    "roomType": "Home Office",
+    "roomSlug": "home-office",
+    "price": 18900,
+    "originalPrice": 22500,
+    "discountPercent": 16,
+    "rating": 4.5,
+    "reviewCount": 36,
+    "inStock": true,
+    "isFeatured": false,
+    "isBestSeller": false,
+    "sizeLabel": "Standard",
+    "createdAt": "2026-07-25",
+    "thumbnail": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&q=80",
+    "images": [
+      "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=1200&q=80",
+      "https://images.unsplash.com/photo-1517502884422-41eaead166d4?w=1200&q=80"
+    ],
+    "colors": [
+      {
+        "name": "Gunmetal",
+        "code": "#1F2937"
+      }
+    ],
+    "material": "Cold Rolled Steel & Electronic Lock",
+    "dimensions": {
+      "width": "1.3 ft",
+      "length": "1.5 ft",
+      "height": "1.4 ft"
+    },
+    "shortDescription": "Cold Rolled Steel & Electronic Lock — crafted for home office use.",
+    "tags": [
+      "Biometric",
+      "Fireproof",
+      "Bolt Down"
+    ]
+  }
+];
+
+export default productsData;

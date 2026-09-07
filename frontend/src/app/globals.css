@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+.container {
+  max-width: 1650px;
+  margin: 0 auto;
+}
+@theme {
+  --color-primary: #9f582c;
+}
