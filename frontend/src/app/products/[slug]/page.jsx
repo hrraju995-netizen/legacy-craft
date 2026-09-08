@@ -6,33 +6,43 @@ import { siteConfig } from "@/config/site";
 export const revalidate = 60;
 
 export async function generateStaticParams() {
-  const products = await getAllProducts();
-  return products.map((product) => ({ slug: product.slug }));
+  try {
+    const products = await getAllProducts();
+    return (Array.isArray(products) ? products : [])
+      .filter((p) => p && p.slug)
+      .map((product) => ({ slug: product.slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }) {
-  const { slug } = await params;
-  const { product } = await getProduct(slug);
+  try {
+    const { slug } = await params;
+    const { product } = await getProduct(slug);
 
-  if (!product) return { title: "Product not found" };
+    if (!product) return { title: "Product not found" };
 
-  const title = product.meta?.title || `${product.name} — ${product.category}`;
-  const description =
-    product.meta?.description ||
-    `${product.shortDescription ?? product.name} Available at ${siteConfig.name} for ৳${product.price.toLocaleString()}.`;
+    const title = product.meta?.title || `${product.name} — ${product.category || ""}`;
+    const description =
+      product.meta?.description ||
+      `${product.shortDescription ?? product.name} Available at ${siteConfig.name} for ৳${(product.price || 0).toLocaleString()}.`;
 
-  return {
-    title,
-    description,
-    alternates: { canonical: `/products/${product.slug}` },
-    openGraph: {
+    return {
       title,
       description,
-      type: "website",
-      url: `${siteConfig.url}/products/${product.slug}`,
-      images: product.thumbnail ? [{ url: product.thumbnail, alt: product.name }] : [],
-    },
-  };
+      alternates: { canonical: `/products/${product.slug}` },
+      openGraph: {
+        title,
+        description,
+        type: "website",
+        url: `${siteConfig.url}/products/${product.slug}`,
+        images: product.thumbnail ? [{ url: product.thumbnail, alt: product.name }] : [],
+      },
+    };
+  } catch {
+    return { title: "Product" };
+  }
 }
 
 export default async function ProductPage({ params }) {

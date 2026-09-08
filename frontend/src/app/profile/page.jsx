@@ -45,7 +45,7 @@ export default function CustomerProfilePage() {
 
   // Backend Origin for Invoices
   const backendBase = useMemo(() => {
-    const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+    const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "https://api.lookstudiobd.com/api/v1";
     return rawApiUrl.replace(/\/api\/v1\/?$/, "").replace(/\/v1\/?$/, "").replace(/\/api\/?$/, "");
   }, []);
 

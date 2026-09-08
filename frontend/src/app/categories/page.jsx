@@ -35,7 +35,7 @@ export default async function CategoriesPage() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {categories.map((category) => (
+          {(Array.isArray(categories) ? categories : []).map((category) => (
             <Link
               key={category.slug}
               href={`/categories/${category.slug}`}
@@ -43,8 +43,8 @@ export default async function CategoriesPage() {
             >
               <div className="relative aspect-4/3 bg-gray-50">
                 <Image
-                  src={category.image}
-                  alt={category.title}
+                  src={category.image || "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=600"}
+                  alt={category.title || "Category"}
                   fill
                   sizes="(max-width: 768px) 50vw, 25vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -56,7 +56,7 @@ export default async function CategoriesPage() {
                   {category.title}
                 </h2>
                 <p className="text-[11px] text-white/80 mt-0.5 flex items-center gap-1">
-                  {category.count} products
+                  {category.count || 0} products
                   <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                 </p>
               </div>

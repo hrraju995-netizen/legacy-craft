@@ -7,7 +7,7 @@
  */
 
 const BASE_URL = (
-  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1"
+  process.env.NEXT_PUBLIC_API_URL || "https://api.lookstudiobd.com/api/v1"
 ).replace(/\/$/, "");
 
 /** Seconds before a cached response is refetched. Overridable per call. */
@@ -95,15 +95,19 @@ export async function apiFetchSafe(path, options, fallback = null) {
 export async function getProducts(params = {}) {
   const response = await apiFetchSafe("/products", { params }, { data: [] });
   return {
-    products: response?.data ?? [],
+    products: Array.isArray(response?.data) ? response.data : [],
     meta: response?.meta ?? null,
   };
 }
 
 export async function getAllProducts() {
   // The catalogue is small; one page is enough for listing screens.
-  const { products } = await getProducts({ per_page: 60 });
-  return products;
+  try {
+    const { products } = await getProducts({ per_page: 60 });
+    return Array.isArray(products) ? products : [];
+  } catch {
+    return [];
+  }
 }
 
 export async function getProduct(slug) {
@@ -114,10 +118,10 @@ export async function getProduct(slug) {
       related: response?.related?.data ?? response?.related ?? [],
     };
   } catch (error) {
-    if (error instanceof ApiError && error.status === 404) {
-      return { product: null, related: [] };
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(`[api] getProduct(${slug}) failed:`, error.message);
     }
-    throw error;
+    return { product: null, related: [] };
   }
 }
 

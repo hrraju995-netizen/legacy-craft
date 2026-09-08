@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -19,6 +19,8 @@ import {
   ShoppingBag,
 } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 const STATUS_STEPS = [
   { key: "pending", label: "Order Placed", desc: "অর্ডার গ্রহণ করা হয়েছে" },
   { key: "confirmed", label: "Confirmed", desc: "অর্ডার নিশ্চিত করা হয়েছে" },
@@ -27,7 +29,7 @@ const STATUS_STEPS = [
   { key: "delivered", label: "Delivered", desc: "সফলভাবে ডেলিভারি সম্পন্ন" },
 ];
 
-export default function TrackOrderPage() {
+function TrackOrderContent() {
   const searchParams = useSearchParams();
   const initialOrderNumber = searchParams.get("order") || "";
 
@@ -49,7 +51,7 @@ export default function TrackOrderPage() {
     setOrderData(null);
 
     try {
-      const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+      const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "https://api.lookstudiobd.com/api/v1";
       const apiUrl = rawApiUrl.replace(/\/v1\/?$/, "");
       const params = new URLSearchParams();
       if (searchPhone.trim()) {
@@ -428,5 +430,19 @@ export default function TrackOrderPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function TrackOrderPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-stone-50 py-12 sm:py-16 flex items-center justify-center">
+          <div className="w-8 h-8 border-4 border-amber-600 border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <TrackOrderContent />
+    </Suspense>
   );
 }

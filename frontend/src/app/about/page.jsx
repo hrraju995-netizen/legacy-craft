@@ -5,7 +5,7 @@ import { ShieldCheck, Truck, Headphones, Award, ArrowRight } from "lucide-react"
 
 async function getAboutPageData() {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://api.lookstudiobd.com/api/v1";
     const res = await fetch(`${apiUrl}/pages/about`, { cache: "no-store" });
     if (!res.ok) return null;
     return await res.json();

@@ -22,10 +22,17 @@ return [
         'http://127.0.0.1:3000',
         'http://localhost:8000',
         'http://127.0.0.1:8000',
+        'https://lookstudiobd.com',
+        'http://lookstudiobd.com',
+        'https://www.lookstudiobd.com',
         env('FRONTEND_URL'),
     ])),
 
-    'allowed_origins_patterns' => [],
+    // Allow any Vercel preview/production deployment URL
+    'allowed_origins_patterns' => [
+        '#^https://.*\.vercel\.app$#',
+        '#^https://.*\.vercel\.app$#',
+    ],
 
     'allowed_headers' => ['*'],
 

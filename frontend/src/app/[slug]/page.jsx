@@ -5,7 +5,7 @@ import { ChevronRight, FileText, ArrowLeft } from "lucide-react";
 
 async function getPageData(slug) {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://api.lookstudiobd.com/api/v1";
     const res = await fetch(`${apiUrl}/pages/${slug}`, {
       cache: "no-store",
     });
@@ -22,19 +22,25 @@ async function getPageData(slug) {
 }
 
 export async function generateMetadata({ params }) {
-  const { slug } = await params;
-  const page = await getPageData(slug);
+  try {
+    const { slug } = await params;
+    const page = await getPageData(slug);
 
-  if (!page) {
+    if (!page) {
+      return {
+        title: "Page Not Found",
+      };
+    }
+
+    return {
+      title: `${page.meta?.title || page.title} | Legacy Craft Studio`,
+      description: page.meta?.description || page.excerpt,
+    };
+  } catch {
     return {
       title: "Page Not Found",
     };
   }
-
-  return {
-    title: `${page.meta?.title || page.title} | Legacy Craft Studio`,
-    description: page.meta?.description || page.excerpt,
-  };
 }
 
 export default async function DynamicCmsPage({ params }) {

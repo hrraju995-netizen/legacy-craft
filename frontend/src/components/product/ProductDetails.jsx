@@ -46,18 +46,24 @@ export default function ProductDetails({ product, related = [] }) {
   const [previewImage, setPreviewImage] = useState(null);
   const [activeDrawer, setActiveDrawer] = useState(null);
 
+  const FALLBACK_PRODUCT_IMAGE =
+    "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=800";
+
   // Combine product gallery images + any variant images without duplicates
   const rawBaseImages =
     product.images && product.images.length > 0
       ? product.images
-      : [product.thumbnail];
+      : [product.thumbnail || FALLBACK_PRODUCT_IMAGE];
   const variantImages = (product.colors || [])
     .map((c) => c.image)
     .filter((img) => typeof img === "string" && img.trim() !== "");
 
-  const productImages = Array.from(
+  const filteredImages = Array.from(
     new Set([...rawBaseImages, ...variantImages])
   ).filter((img) => typeof img === "string" && img.trim() !== "");
+
+  const productImages =
+    filteredImages.length > 0 ? filteredImages : [FALLBACK_PRODUCT_IMAGE];
 
   // Find the active variant based on selectedColor
   const activeColorObj =

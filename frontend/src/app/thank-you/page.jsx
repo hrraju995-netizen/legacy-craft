@@ -170,7 +170,7 @@ export default function ThankYouPage() {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
-            href={`http://127.0.0.1:8000/orders/${orderData.orderNumber || orderData.id || "latest"}/invoice/download`}
+            href={`${(process.env.NEXT_PUBLIC_API_URL || "https://api.lookstudiobd.com").replace(/\/api\/v1\/?$/, "")}/orders/${orderData.orderNumber || orderData.id || "latest"}/invoice/download`}
             target="_blank"
             rel="noopener noreferrer"
             download
