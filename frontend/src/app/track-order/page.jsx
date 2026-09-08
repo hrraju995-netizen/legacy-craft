@@ -19,6 +19,8 @@ import {
   ShoppingBag,
 } from "lucide-react";
 
+import { trackOrder } from "@/lib/api";
+
 export const dynamic = "force-dynamic";
 
 const STATUS_STEPS = [
@@ -50,25 +52,45 @@ function TrackOrderContent() {
     setError("");
     setOrderData(null);
 
+    // Clean phone: ignore if it's placeholder or contains X
+    const cleanPhone = searchPhone.trim();
+    const effectivePhone = cleanPhone && !cleanPhone.includes("X") && !cleanPhone.includes("x") ? cleanPhone : "";
+
     try {
-      const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "https://api.lookstudiobd.com/api/v1";
-      const apiUrl = rawApiUrl.replace(/\/v1\/?$/, "");
-      const params = new URLSearchParams();
-      if (searchPhone.trim()) {
-        params.append("phone", searchPhone.trim());
-      }
-
-      const url = `${apiUrl}/v1/orders/${encodeURIComponent(cleanNum)}/track?${params.toString()}`;
-      const res = await fetch(url);
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data?.message || "Order not found. Please check the order number.");
+      let data;
+      try {
+        // 1. Primary: Use same-origin Next.js rewrite proxy (eliminates all CORS errors)
+        data = await trackOrder(cleanNum, effectivePhone);
+      } catch (proxyErr) {
+        // 2. Fallback: Direct API call if proxy is not configured or in local dev
+        const directBase = (process.env.NEXT_PUBLIC_API_URL || "https://api.lookstudiobd.com/api/v1").replace(/\/$/, "");
+        const params = new URLSearchParams();
+        if (effectivePhone) {
+          params.append("phone", effectivePhone);
+        }
+        const directUrl = `${directBase}/orders/${encodeURIComponent(cleanNum)}/track?${params.toString()}`;
+        const res = await fetch(directUrl, {
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) {
+          const errBody = await res.json().catch(() => ({}));
+          throw new Error(errBody?.message || proxyErr?.message || "Order not found. Please check your Order Number.");
+        }
+        data = await res.json();
       }
 
       setOrderData(data);
     } catch (err) {
-      setError(err.message || "Could not retrieve tracking details. Please try again.");
+      const rawMsg = err?.message || "";
+      if (
+        rawMsg.toLowerCase().includes("failed to fetch") ||
+        rawMsg.toLowerCase().includes("networkerror") ||
+        rawMsg.toLowerCase().includes("fetch failed")
+      ) {
+        setError("অর্ডারটি পাওয়া যায়নি অথবা সংযোগে সমস্যা হচ্ছে। আপনার অর্ডার নম্বরটি সঠিক কিনা যাচাই করুন। (Unable to find order. Please verify your Order Number).");
+      } else {
+        setError(rawMsg || "Order not found. Please check your Order Number.");
+      }
     } finally {
       setLoading(false);
     }
@@ -214,7 +236,7 @@ function TrackOrderContent() {
                   </span>
 
                   <a
-                    href={`http://localhost:8000/orders/${orderData.orderNumber}/invoice`}
+                    href={`https://api.lookstudiobd.com/orders/${orderData.orderNumber}/invoice/download`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-semibold transition-colors"

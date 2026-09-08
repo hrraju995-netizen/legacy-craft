@@ -68,6 +68,16 @@ export default async function RootLayout({ children }) {
   ]);
 
   const general = site?.settings?.general ?? {};
+
+  // Fix logo URL if server returns localhost-based URL (APP_URL not set on server)
+  const fixUrl = (url) => {
+    if (!url) return url;
+    if (url.includes('localhost') || url.includes('127.0.0.1')) {
+      return url.replace(/https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/, 'https://api.lookstudiobd.com');
+    }
+    return url;
+  };
+  if (general.logo) general.logo = fixUrl(general.logo);
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "FurnitureStore",
