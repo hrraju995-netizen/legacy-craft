@@ -10,8 +10,10 @@ export default function FloatingChat({ settings: initialSettings = null }) {
 
   // Always fetch fresh config on client mount to bypass any SSR/browser caching
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-    fetch(`${apiUrl}/v1/site/config?t=${Date.now()}`, { cache: "no-store" })
+    const apiUrl = typeof window !== "undefined"
+      ? "/api/v1"
+      : (process.env.NEXT_PUBLIC_API_URL || "https://api.lookstudiobd.com/api/v1");
+    fetch(`${apiUrl}/site/config?t=${Date.now()}`, { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         if (data?.settings?.chat) {

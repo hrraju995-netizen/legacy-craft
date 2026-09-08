@@ -15,8 +15,13 @@ export default function CheckoutPage() {
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
 
-  // Zones come from the admin panel, so rates are never hard-coded here.
-  const [zones, setZones] = useState([]);
+  const DEFAULT_ZONES = [
+    { id: "inside-dhaka", label: "Inside Dhaka", cost: 70, note: "24-48 Hours" },
+    { id: "outside-dhaka", label: "Outside Dhaka", cost: 130, note: "3-5 Days" },
+  ];
+
+  // Zones come from the admin panel, with offline fallback so checkout never blocks.
+  const [zones, setZones] = useState(DEFAULT_ZONES);
   const [shippingArea, setShippingArea] = useState("inside-dhaka");
   const [submitting, setSubmitting] = useState(false);
 
@@ -36,14 +41,22 @@ export default function CheckoutPage() {
   useEffect(() => {
     setIsMounted(true);
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/site/config`)
+    const apiUrl = typeof window !== "undefined"
+      ? "/api/v1/site/config"
+      : (process.env.NEXT_PUBLIC_API_URL || "https://api.lookstudiobd.com/api/v1") + "/site/config";
+
+    fetch(apiUrl)
       .then((r) => r.json())
       .then((config) => {
         const list = config?.shippingZones ?? [];
-        setZones(list);
-        if (list.length) setShippingArea(list[0].id);
+        if (list.length) {
+          setZones(list);
+          setShippingArea(list[0].id);
+        }
       })
-      .catch(() => setZones([]));
+      .catch(() => {
+        setZones(DEFAULT_ZONES);
+      });
   }, []);
 
   const subtotal = cart.reduce(

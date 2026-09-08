@@ -6,9 +6,15 @@
  * base URL and any future tokens off the browser.
  */
 
-const BASE_URL = (
-  process.env.NEXT_PUBLIC_API_URL || "https://api.lookstudiobd.com/api/v1"
-).replace(/\/$/, "");
+function getBaseUrl() {
+  if (typeof window !== "undefined") {
+    // In browser: use relative path via Next.js rewrites to eliminate all CORS issues
+    return window.location.origin + "/api/v1";
+  }
+  return (
+    process.env.NEXT_PUBLIC_API_URL || "https://api.lookstudiobd.com/api/v1"
+  ).replace(/\/$/, "");
+}
 
 /** Seconds before a cached response is refetched. Overridable per call. */
 const DEFAULT_REVALIDATE = 60;
@@ -23,7 +29,8 @@ export class ApiError extends Error {
 }
 
 function buildUrl(path, params) {
-  const url = new URL(`${BASE_URL}${path.startsWith("/") ? path : `/${path}`}`);
+  const base = getBaseUrl();
+  const url = new URL(`${base}${path.startsWith("/") ? path : `/${path}`}`);
 
   for (const [key, value] of Object.entries(params || {})) {
     // Skip empties so `?category=` never reaches the API as a real filter.

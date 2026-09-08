@@ -19,6 +19,18 @@ const nextConfig = {
     deviceSizes: [360, 480, 640, 768, 1024, 1280, 1536, 1920],
   },
   reactCompiler: true,
+  async rewrites() {
+    return [
+      {
+        source: "/api/v1/:path*",
+        destination: "https://api.lookstudiobd.com/api/v1/:path*",
+      },
+      {
+        source: "/orders/:path*/invoice/download",
+        destination: "https://api.lookstudiobd.com/orders/:path*/invoice/download",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

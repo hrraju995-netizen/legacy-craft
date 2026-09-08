@@ -10,9 +10,10 @@ export default function ContactPage() {
   const [settings, setSettings] = useState({});
 
   useEffect(() => {
-    const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-    const apiUrl = rawApiUrl.replace(/\/v1\/?$/, "");
-    fetch(`${apiUrl}/v1/site/config?t=${Date.now()}`, { cache: "no-store" })
+    const apiUrl = typeof window !== "undefined"
+      ? "/api/v1"
+      : (process.env.NEXT_PUBLIC_API_URL || "https://api.lookstudiobd.com/api/v1");
+    fetch(`${apiUrl}/site/config?t=${Date.now()}`, { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         if (data?.settings) {
@@ -46,9 +47,10 @@ export default function ContactPage() {
     setSubmitting(true);
 
     try {
-      const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-      const apiUrl = rawApiUrl.replace(/\/v1\/?$/, "");
-      const res = await fetch(`${apiUrl}/v1/contact`, {
+      const apiUrl = typeof window !== "undefined"
+        ? "/api/v1"
+        : (process.env.NEXT_PUBLIC_API_URL || "https://api.lookstudiobd.com/api/v1");
+      const res = await fetch(`${apiUrl}/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
