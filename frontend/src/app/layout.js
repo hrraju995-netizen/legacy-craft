@@ -22,35 +22,57 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-export const metadata = {
-  metadataBase: new URL(siteConfig.url),
-  title: {
-    default: `${siteConfig.name} — Handcrafted Furniture in Bangladesh`,
-    template: `%s | ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  keywords: [
-    "furniture Bangladesh",
-    "wooden bed price",
-    "office furniture Dhaka",
-    "sofa price in Bangladesh",
-  ],
-  alternates: { canonical: "/" },
-  openGraph: {
-    type: "website",
-    siteName: siteConfig.name,
-    title: `${siteConfig.name} — Handcrafted Furniture in Bangladesh`,
-    description: siteConfig.description,
-    url: siteConfig.url,
-    locale: "en_BD",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: siteConfig.name,
-    description: siteConfig.description,
-  },
-  robots: { index: true, follow: true },
-};
+export async function generateMetadata() {
+  const site = await getSiteConfig().catch(() => null);
+  const general = site?.settings?.general ?? {};
+
+  const fixUrl = (url) => {
+    if (!url) return url;
+    if (url.includes("localhost") || url.includes("127.0.0.1")) {
+      return url.replace(/https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/, "https://api.lookstudiobd.com");
+    }
+    return url;
+  };
+
+  const favicon = fixUrl(general.favicon) || fixUrl(general.logo) || "/favicon.ico";
+  const siteName = general.site_name || siteConfig.name;
+  const siteDesc = general.site_tagline || siteConfig.description;
+
+  return {
+    metadataBase: new URL(siteConfig.url),
+    title: {
+      default: `${siteName} — Handcrafted Furniture in Bangladesh`,
+      template: `%s | ${siteName}`,
+    },
+    description: siteDesc,
+    keywords: [
+      "furniture Bangladesh",
+      "wooden bed price",
+      "office furniture Dhaka",
+      "sofa price in Bangladesh",
+    ],
+    icons: {
+      icon: [{ url: favicon }],
+      shortcut: [favicon],
+      apple: [favicon],
+    },
+    alternates: { canonical: "/" },
+    openGraph: {
+      type: "website",
+      siteName: siteName,
+      title: `${siteName} — Handcrafted Furniture in Bangladesh`,
+      description: siteDesc,
+      url: siteConfig.url,
+      locale: "en_BD",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: siteName,
+      description: siteDesc,
+    },
+    robots: { index: true, follow: true },
+  };
+}
 
 export const viewport = {
   themeColor: "#9f582c",
@@ -72,12 +94,15 @@ export default async function RootLayout({ children }) {
   // Fix logo URL if server returns localhost-based URL (APP_URL not set on server)
   const fixUrl = (url) => {
     if (!url) return url;
-    if (url.includes('localhost') || url.includes('127.0.0.1')) {
-      return url.replace(/https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/, 'https://api.lookstudiobd.com');
+    if (url.includes("localhost") || url.includes("127.0.0.1")) {
+      return url.replace(/https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/, "https://api.lookstudiobd.com");
     }
     return url;
   };
   if (general.logo) general.logo = fixUrl(general.logo);
+  if (general.favicon) general.favicon = fixUrl(general.favicon);
+  const activeFavicon = general.favicon || general.logo || "/favicon.ico";
+
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "FurnitureStore",
@@ -95,6 +120,10 @@ export default async function RootLayout({ children }) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <link rel="icon" href={activeFavicon} />
+        <link rel="apple-touch-icon" href={activeFavicon} />
+      </head>
       <body className="min-h-full flex flex-col">
         <script
           type="application/ld+json"
