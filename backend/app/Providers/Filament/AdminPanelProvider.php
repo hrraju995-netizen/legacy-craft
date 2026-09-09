@@ -88,6 +88,9 @@ class AdminPanelProvider extends PanelProvider
                     ->openUrlInNewTab(),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
+            ->resources([
+                \App\Filament\Resources\Articles\ArticleResource::class,
+            ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,

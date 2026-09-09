@@ -28,7 +28,17 @@ class ArticleResource extends Resource
 
     protected static \UnitEnum|string|null $navigationGroup = 'Site Customization';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 5;
+
+    public static function canAccess(): bool
+    {
+        return true;
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return true;
+    }
 
     public static function form(Schema $schema): Schema
     {

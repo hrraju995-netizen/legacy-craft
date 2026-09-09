@@ -17,9 +17,10 @@ ini_set('display_errors', '1');
 $baseDir = dirname(__DIR__);
 $results = [];
 
-// 1. Clear cached routes and configs
+// 1. Clear cached routes, configs, and filament panel discovery caches
 $cacheFiles = [
     $baseDir . '/bootstrap/cache/routes-v7.php',
+    $baseDir . '/bootstrap/cache/routes.php',
     $baseDir . '/bootstrap/cache/config.php',
     $baseDir . '/bootstrap/cache/services.php',
     $baseDir . '/bootstrap/cache/packages.php',
@@ -33,9 +34,30 @@ foreach ($cacheFiles as $cf) {
         }
     }
 }
+
+// Clear Filament component & panel caches
+$filamentCacheDir = $baseDir . '/bootstrap/cache/filament';
+if (is_dir($filamentCacheDir)) {
+    $rdi = new RecursiveDirectoryIterator($filamentCacheDir, RecursiveDirectoryIterator::SKIP_DOTS);
+    $rii = new RecursiveIteratorIterator($rdi, RecursiveIteratorIterator::CHILD_FIRST);
+    foreach ($rii as $item) {
+        if ($item->isFile()) {
+            @unlink($item->getRealPath());
+            $clearedCaches++;
+        } elseif ($item->isDir()) {
+            @rmdir($item->getRealPath());
+        }
+    }
+    @rmdir($filamentCacheDir);
+}
+
+if (function_exists('opcache_reset')) {
+    @opcache_reset();
+}
+
 $results[] = [
     'type' => 'success',
-    'msg' => "Cleared $clearedCaches bootstrap cache file(s) (route & config cache refreshed).",
+    'msg' => "Cleared $clearedCaches bootstrap & Filament panel cache file(s) (refreshed all resources & routes).",
 ];
 
 // 2. Clear framework cache data files
