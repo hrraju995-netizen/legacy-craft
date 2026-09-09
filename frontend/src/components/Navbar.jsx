@@ -8,6 +8,7 @@ import {
 import Image from "next/image";
 import navLogo from "../../public/main-logo.png";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/useCartStore";
 import { useCustomerAuthStore } from "@/store/useCustomerAuthStore";
 
@@ -16,10 +17,12 @@ const searchHref = (term) => `/products?q=${encodeURIComponent(term)}`;
 
 
 const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) => {
+    const router = useRouter();
     const safeApiCategories = Array.isArray(apiCategories) ? apiCategories : [];
     const safeApiRooms = Array.isArray(apiRooms) ? apiRooms : [];
     const [activeMenu, setActiveMenu] = useState(null);
     const [activeCategory, setActiveCategory] = useState("Storage & Organizer");
+    const [searchQuery, setSearchQuery] = useState("");
 
     const defaultNavItems = [
         { label: "Products", key: "products", href: "/products" },
@@ -55,6 +58,20 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [mobileTab, setMobileTab] = useState("products");
     const [selectedCategory, setSelectedCategory] = useState(null);
+
+    const handleCloseMobileMenu = () => {
+        setIsMobileMenuOpen(false);
+        setSelectedCategory(null);
+    };
+
+    const handleSearchSubmit = (e) => {
+        e?.preventDefault();
+        const trimmed = searchQuery.trim();
+        if (trimmed) {
+            handleCloseMobileMenu();
+            router.push(`/products?q=${encodeURIComponent(trimmed)}`);
+        }
+    };
 
     const scrollContainerRef = useRef(null);
 
@@ -171,10 +188,11 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
 
     const roomsData = safeApiRooms.length
         ? safeApiRooms.map((r) => {
-            const fallback = fallbackRooms.find((fr) => fr.title?.toLowerCase() === (r.title || "").toLowerCase())?.image || "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=100&h=70&fit=crop";
+            const fallback = fallbackRooms.find((fr) => fr.title?.toLowerCase() === (r.title || "").toLowerCase())?.image || "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=300&h=200&fit=crop";
+            const isHttp = typeof r.image === "string" && (r.image.startsWith("http") || r.image.startsWith("/"));
             return {
               title: r.title,
-              image: r.image || fallback,
+              image: isHttp ? r.image : fallback,
               slug: r.slug
             };
           })
@@ -333,14 +351,18 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
 
                         {/* Right Action Icons & Search */}
                         <div className="flex items-center gap-3 lg:gap-6">
-                            <div className="relative hidden lg:block w-72 xl:w-80">
+                            <form onSubmit={handleSearchSubmit} className="relative hidden lg:block w-72 xl:w-80">
                                 <input
                                     type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder="What are you looking for?"
-                                    className="w-full bg-white border border-gray-300 rounded-full py-2 pl-10 pr-4 text-xs xl:text-sm focus:outline-none focus:border-primary placeholder:text-gray-400 cursor-pointer"
+                                    className="w-full bg-white border border-gray-300 rounded-full py-2 pl-10 pr-4 text-xs xl:text-sm focus:outline-none focus:border-primary placeholder:text-gray-400"
                                 />
-                                <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                            </div>
+                                <button type="submit" aria-label="Search products" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black">
+                                    <Search className="w-4 h-4" />
+                                </button>
+                            </form>
 
                             <div className="flex items-center gap-3 sm:gap-4 text-gray-900">
                                 {/* User Icon */}
@@ -391,14 +413,18 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
 
                     {/* Mobile Search Bar */}
                     <div className="md:hidden pb-4">
-                        <div className="relative w-full">
+                        <form onSubmit={handleSearchSubmit} className="relative w-full">
                             <input
                                 type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="What are you looking for?"
                                 className="w-full bg-white border border-gray-300 rounded-full py-2 pl-10 pr-4 text-xs focus:outline-none focus:border-primary placeholder:text-gray-400"
                             />
-                            <Search className="w-4 h-4 text-black absolute left-3.5 top-1/2 -translate-y-1/2 cursor-pointer" />
-                        </div>
+                            <button type="submit" aria-label="Search" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-black">
+                                <Search className="w-4 h-4 cursor-pointer" />
+                            </button>
+                        </form>
                     </div>
                 </div>
 
@@ -743,14 +769,20 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
                     {/* Main Scrollable Body Content */}
                     <div className="flex-1 overflow-y-auto p-4 space-y-3">
                         {mobileTab === "products" && !selectedCategory && (
-                            <div className="space-y-3">
+                            <div className="space-y-2.5">
+                                <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-1 pb-1">
+                                    Product Categories (ক্যাটাগরি সমূহ)
+                                </div>
                                 {categories.map((cat, idx) => (
                                     <div
                                         key={idx}
-                                        onClick={() => setSelectedCategory(cat.name)}
-                                        className="flex items-center justify-between p-3 border border-gray-100 rounded-xl hover:shadow-sm cursor-pointer transition-all bg-white"
+                                        className="flex items-center justify-between p-2.5 sm:p-3 border border-gray-100 rounded-xl hover:shadow-sm transition-all bg-white"
                                     >
-                                        <div className="flex items-center gap-3">
+                                        <Link
+                                            href={categoryHref(cat.name)}
+                                            onClick={handleCloseMobileMenu}
+                                            className="flex items-center gap-3 flex-1 min-w-0"
+                                        >
                                             <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
                                                 <Image
                                                     src={cat.image}
@@ -758,49 +790,111 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
                                                     width={48}
                                                     height={48}
                                                     className="w-full h-full object-cover"
+                                                    onError={(e) => {
+                                                        e.currentTarget.src = "https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=80&h=80&fit=crop";
+                                                    }}
                                                 />
                                             </div>
-                                            <span className="font-semibold text-sm text-gray-800">{cat.name}</span>
-                                        </div>
-                                        <ArrowRight className="w-4 h-4 text-gray-400" />
+                                            <div className="flex flex-col min-w-0">
+                                                <span className="font-semibold text-sm text-gray-900 truncate">{cat.name}</span>
+                                                <span className="text-[11px] text-primary font-medium">Browse category &rarr;</span>
+                                            </div>
+                                        </Link>
+
+                                        <button
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setSelectedCategory(cat.name);
+                                            }}
+                                            className="p-2 text-gray-400 hover:text-black hover:bg-gray-50 rounded-lg flex items-center gap-1 text-xs ml-2 flex-shrink-0 border border-transparent hover:border-gray-200"
+                                            title="View Subcategories"
+                                        >
+                                            <span className="text-[11px] text-gray-500 font-medium">Sub-items</span>
+                                            <ArrowRight className="w-4 h-4 text-gray-400" />
+                                        </button>
                                     </div>
                                 ))}
                             </div>
                         )}
 
                         {mobileTab === "products" && selectedCategory && (
-                            <div className="space-y-2">
-                                <h4 className="font-bold text-sm text-gray-900 mb-3">{selectedCategory} Items</h4>
-                                {storageItems.flat().map((item, idx) => (
-                                    <Link
-                                        key={idx}
-                                        href={searchHref(item.name)}
-                                        className="flex items-center gap-3 py-2 px-3 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                                    >
-                                        <Image
-                                            src={item.image}
-                                            alt={item.name}
-                                            width={40}
-                                            height={40}
-                                            className="w-10 h-10 object-cover rounded-md flex-shrink-0 border border-gray-200"
-                                        />
-                                        <span className="font-medium">{item.name}</span>
-                                    </Link>
-                                ))}
+                            <div className="space-y-3">
+                                {/* Direct Link to View All Category Products */}
+                                <Link
+                                    href={categoryHref(selectedCategory)}
+                                    onClick={handleCloseMobileMenu}
+                                    className="flex items-center justify-between p-3.5 bg-primary/10 border border-primary/20 rounded-xl text-primary font-bold text-sm hover:bg-primary/20 transition-all"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <span>View All {selectedCategory}</span>
+                                        <span className="text-xs font-normal opacity-80">(সব পণ্য দেখুন)</span>
+                                    </div>
+                                    <ArrowRight className="w-4 h-4" />
+                                </Link>
+
+                                <h4 className="font-bold text-xs text-gray-500 uppercase tracking-wider mt-4 mb-2">
+                                    Subcategories / Popular Items
+                                </h4>
+
+                                <div className="space-y-1.5">
+                                    {(() => {
+                                        const currentCat = categories.find((c) => c.name === selectedCategory);
+                                        const subItems = currentCat?.children?.length
+                                            ? currentCat.children
+                                            : (storageItems.flat() || []);
+
+                                        return subItems.map((item, idx) => (
+                                            <Link
+                                                key={idx}
+                                                href={item.slug ? `/products?category=${item.slug}` : searchHref(item.name)}
+                                                onClick={handleCloseMobileMenu}
+                                                className="flex items-center justify-between py-2.5 px-3 rounded-xl text-sm text-gray-700 hover:bg-gray-50 border border-gray-50 hover:border-gray-200 transition-colors"
+                                            >
+                                                <div className="flex items-center gap-3">
+                                                    {item.image && (
+                                                        <Image
+                                                            src={item.image}
+                                                            alt={item.name}
+                                                            width={36}
+                                                            height={36}
+                                                            className="w-9 h-9 object-cover rounded-lg flex-shrink-0 border border-gray-100"
+                                                            onError={(e) => {
+                                                                e.currentTarget.src = "https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=60&h=60&fit=crop";
+                                                            }}
+                                                        />
+                                                    )}
+                                                    <span className="font-medium text-xs text-gray-800">{item.name}</span>
+                                                </div>
+                                                <ArrowRight className="w-3.5 h-3.5 text-gray-300" />
+                                            </Link>
+                                        ));
+                                    })()}
+                                </div>
                             </div>
                         )}
 
                         {mobileTab === "rooms" && (
                             <div className="grid grid-cols-2 gap-3">
                                 {roomsData.map((room, idx) => (
-                                    <Link key={idx} href={searchHref(room.title)} className="flex flex-col items-center p-3 border border-gray-100 rounded-xl hover:bg-gray-50 text-center">
-                                        <Image
-                                            src={room.image}
-                                            alt={room.title}
-                                            width={300}
-                                            height={80}
-                                            className="w-full h-20 object-cover rounded-lg mb-2"
-                                        />
+                                    <Link
+                                        key={idx}
+                                        href={room.slug ? `/products?room=${encodeURIComponent(room.slug)}` : searchHref(room.title)}
+                                        onClick={handleCloseMobileMenu}
+                                        className="flex flex-col items-center p-3 border border-gray-100 rounded-xl hover:bg-gray-50 text-center transition-all hover:shadow-sm bg-white"
+                                    >
+                                        <div className="w-full h-20 bg-gray-100 rounded-lg overflow-hidden mb-2 relative">
+                                            <Image
+                                                src={room.image}
+                                                alt={room.title}
+                                                width={300}
+                                                height={80}
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => {
+                                                    e.currentTarget.src = "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=300&h=200&fit=crop";
+                                                }}
+                                            />
+                                        </div>
                                         <span className="font-semibold text-xs text-gray-800">{room.title}</span>
                                     </Link>
                                 ))}
@@ -810,11 +904,16 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
                         {mobileTab === "series" && (
                             <div className="space-y-4">
                                 {seriesData.map((series, idx) => (
-                                    <div key={idx} className="p-3 border border-gray-100 rounded-xl space-y-2">
+                                    <div key={idx} className="p-3 border border-gray-100 rounded-xl space-y-2 bg-white">
                                         <h5 className="font-bold text-sm text-gray-900">{series.title}</h5>
                                         <div className="space-y-1">
                                             {series.items.map((item, itemIdx) => (
-                                                <Link key={itemIdx} href={searchHref(item)} className="block text-xs text-gray-600 hover:text-black">
+                                                <Link
+                                                    key={itemIdx}
+                                                    href={searchHref(item)}
+                                                    onClick={handleCloseMobileMenu}
+                                                    className="block text-xs text-gray-600 hover:text-black py-1 px-1 rounded hover:bg-gray-50"
+                                                >
                                                     {item}
                                                 </Link>
                                             ))}
@@ -839,13 +938,21 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
 
                                         <div className="space-y-2 border-t border-red-100 pt-2">
                                             {offer.products.map((prod, prodIdx) => (
-                                                <Link key={prodIdx} href={searchHref(prod.name)} className="flex items-center gap-3 bg-white p-2 rounded-xl border border-gray-100">
+                                                <Link
+                                                    key={prodIdx}
+                                                    href={searchHref(prod.name)}
+                                                    onClick={handleCloseMobileMenu}
+                                                    className="flex items-center gap-3 bg-white p-2 rounded-xl border border-gray-100 hover:border-gray-200 transition-colors"
+                                                >
                                                     <Image
                                                         src={prod.image}
                                                         alt={prod.name}
                                                         width={40}
                                                         height={40}
                                                         className="w-10 h-10 object-cover rounded-lg"
+                                                        onError={(e) => {
+                                                            e.currentTarget.src = "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=120&h=120&fit=crop";
+                                                        }}
                                                     />
                                                     <div>
                                                         <p className="text-xs font-semibold text-gray-800">{prod.name}</p>
@@ -865,13 +972,21 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
                         {mobileTab === "inspiration" && (
                             <div className="space-y-3">
                                 {inspirationData.map((item, idx) => (
-                                    <Link key={idx} href={searchHref(item.title)} className="flex gap-3 items-center p-2 border border-gray-100 rounded-xl">
+                                    <Link
+                                        key={idx}
+                                        href={searchHref(item.title)}
+                                        onClick={handleCloseMobileMenu}
+                                        className="flex gap-3 items-center p-2 border border-gray-100 rounded-xl hover:bg-gray-50 bg-white"
+                                    >
                                         <Image
                                             src={item.image}
                                             alt={item.title}
                                             width={80}
                                             height={56}
                                             className="w-20 h-14 object-cover rounded-lg flex-shrink-0"
+                                            onError={(e) => {
+                                                e.currentTarget.src = "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=200&h=130&fit=crop";
+                                            }}
                                         />
                                         <div>
                                             <h5 className="font-semibold text-xs text-gray-800">{item.title}</h5>
@@ -884,10 +999,22 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
 
                         {mobileTab === "design" && (
                             <div className="space-y-3">
+                                <Link
+                                    href="/contact"
+                                    onClick={handleCloseMobileMenu}
+                                    className="flex items-center justify-between p-3.5 bg-primary text-white font-semibold text-xs rounded-xl shadow-sm hover:opacity-95 transition-opacity"
+                                >
+                                    <span>Book Design Consultation / Contact Us &rarr;</span>
+                                </Link>
                                 {supportData.map((item, idx) => {
                                     const Icon = item.icon;
                                     return (
-                                        <div key={idx} className="flex gap-3 items-start p-3 border border-gray-100 rounded-xl">
+                                        <Link
+                                            key={idx}
+                                            href="/contact"
+                                            onClick={handleCloseMobileMenu}
+                                            className="flex gap-3 items-start p-3 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors bg-white"
+                                        >
                                             <div className="p-2 bg-sky-50 text-sky-600 rounded-lg flex-shrink-0">
                                                 <Icon className="w-5 h-5" />
                                             </div>
@@ -895,7 +1022,7 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
                                                 <h5 className="font-bold text-xs text-gray-900">{item.title}</h5>
                                                 <p className="text-[11px] text-gray-500 mt-0.5">{item.desc}</p>
                                             </div>
-                                        </div>
+                                        </Link>
                                     );
                                 })}
                             </div>
