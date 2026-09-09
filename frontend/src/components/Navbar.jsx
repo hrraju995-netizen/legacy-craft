@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import {
-    Search, User, Heart, ShoppingBag, ChevronLeft, ChevronRight, Menu, X,
+    Search, User, Heart, ShoppingBag, ChevronLeft, ChevronRight, ChevronDown, Menu, X,
     Home, Layers, Tag, Lightbulb, LifeBuoy, ChevronRight as ArrowRight,
     Sparkles, ShieldCheck, Truck, Headphones, Box, Percent
 } from "lucide-react";
@@ -56,12 +56,14 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
 
     // Mobile drawer states
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [mobileTab, setMobileTab] = useState("products");
+    const [mobileTab, setMobileTab] = useState("menu");
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const [expandedMenuKey, setExpandedMenuKey] = useState(null);
 
     const handleCloseMobileMenu = () => {
         setIsMobileMenuOpen(false);
         setSelectedCategory(null);
+        setExpandedMenuKey(null);
     };
 
     const handleSearchSubmit = (e) => {
@@ -255,12 +257,13 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
     ];
 
     const bottomTabs = [
-        { key: "products", label: "Products", icon: Box },
+        { key: "menu", label: "Menu", icon: Menu },
+        { key: "products", label: "Categories", icon: Box },
         { key: "rooms", label: "Rooms", icon: Home },
         { key: "series", label: "Series", icon: Layers },
         { key: "offers", label: "Offers", icon: Tag },
         { key: "inspiration", label: "Inspiration", icon: Lightbulb },
-        { key: "design", label: "Design/Support", icon: LifeBuoy },
+        { key: "design", label: "Support", icon: LifeBuoy },
     ];
 
     return (
@@ -401,7 +404,11 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
 
                                 {/* Mobile Hamburger Menu Icon */}
                                 <button
-                                    onClick={() => setIsMobileMenuOpen(true)}
+                                    onClick={() => {
+                                        setMobileTab("menu");
+                                        setSelectedCategory(null);
+                                        setIsMobileMenuOpen(true);
+                                    }}
                                     className="md:hidden hover:text-black transition-colors p-1 ml-1"
                                 >
                                     <Menu className="w-6 h-6 stroke-[2]" />
@@ -412,7 +419,7 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
                     </div>
 
                     {/* Mobile Search Bar */}
-                    <div className="md:hidden pb-4">
+                    <div className="md:hidden pb-2.5">
                         <form onSubmit={handleSearchSubmit} className="relative w-full">
                             <input
                                 type="text"
@@ -426,6 +433,35 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
                             </button>
                         </form>
                     </div>
+
+                    {/* Mobile Quick Main Menu Scroll Bar */}
+                    {desktopNavItems.length > 0 && (
+                        <div className="md:hidden pb-3 -mt-0.5">
+                            <div
+                                className="flex items-center gap-2 overflow-x-auto scrollbar-none py-0.5 px-0.5"
+                                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                            >
+                                {desktopNavItems.map((item, idx) => (
+                                    <Link
+                                        key={idx}
+                                        href={item.href || "/products"}
+                                        target={item.newTab ? "_blank" : undefined}
+                                        className="text-xs font-semibold px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:bg-gray-50 text-gray-800 whitespace-nowrap flex-shrink-0 flex items-center gap-1.5 shadow-2xs transition-colors"
+                                    >
+                                        <span>{item.label}</span>
+                                        {item.badge && (
+                                            <span
+                                                className="text-[9px] font-bold px-1.5 py-0.2 rounded-full text-white"
+                                                style={{ backgroundColor: item.badgeColor || "#9f582c" }}
+                                            >
+                                                {item.badge}
+                                            </span>
+                                        )}
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* ---------------- DESKTOP MEGA MENUS ---------------- */}
@@ -746,7 +782,7 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
                     {/* Header */}
                     <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                         <h3 className="font-bold text-lg text-gray-900 capitalize">
-                            {selectedCategory ? selectedCategory : mobileTab}
+                            {selectedCategory ? selectedCategory : (mobileTab === "menu" ? "Main Menu" : mobileTab)}
                         </h3>
                         <div className="flex items-center gap-2">
                             {selectedCategory && (
@@ -768,6 +804,90 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
 
                     {/* Main Scrollable Body Content */}
                     <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                        {/* Mobile Main Menu Tab */}
+                        {mobileTab === "menu" && (
+                            <div className="space-y-2.5">
+                                <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-1 pb-1">
+                                    Main Navigation (মূল মেনু)
+                                </div>
+                                {desktopNavItems.map((item, idx) => {
+                                    const hasChildren = Array.isArray(item.children) && item.children.length > 0;
+                                    const itemKey = item.key || item.label || idx;
+                                    const isExpanded = expandedMenuKey === itemKey;
+
+                                    return (
+                                        <div key={idx} className="border border-gray-100 rounded-xl overflow-hidden bg-white shadow-2xs">
+                                            <div className="flex items-center justify-between p-3.5 hover:bg-gray-50 transition-colors">
+                                                <Link
+                                                    href={item.href || "/products"}
+                                                    target={item.newTab ? "_blank" : undefined}
+                                                    onClick={handleCloseMobileMenu}
+                                                    className="flex items-center gap-2 flex-1 font-semibold text-sm text-gray-900"
+                                                >
+                                                    <span>{item.label}</span>
+                                                    {item.badge && (
+                                                        <span
+                                                            className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white"
+                                                            style={{ backgroundColor: item.badgeColor || "#9f582c" }}
+                                                        >
+                                                            {item.badge}
+                                                        </span>
+                                                    )}
+                                                </Link>
+                                                {hasChildren && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setExpandedMenuKey(isExpanded ? null : itemKey)}
+                                                        className="p-1.5 text-gray-400 hover:text-black hover:bg-gray-100 rounded-lg ml-2 transition-colors"
+                                                    >
+                                                        <ChevronDown
+                                                            className={`w-4 h-4 transition-transform duration-200 ${
+                                                                isExpanded ? "rotate-180 text-primary" : ""
+                                                            }`}
+                                                        />
+                                                    </button>
+                                                )}
+                                            </div>
+
+                                            {hasChildren && isExpanded && (
+                                                <div className="bg-gray-50/80 border-t border-gray-100 px-3 py-2 space-y-1">
+                                                    {item.children.map((child, cIdx) => (
+                                                        <Link
+                                                            key={cIdx}
+                                                            href={child.href || "/products"}
+                                                            target={child.newTab ? "_blank" : undefined}
+                                                            onClick={handleCloseMobileMenu}
+                                                            className="flex items-center gap-2.5 py-2 px-2.5 rounded-lg text-xs font-medium text-gray-700 hover:text-primary hover:bg-white transition-all"
+                                                        >
+                                                            {child.image && (
+                                                                <Image
+                                                                    src={child.image}
+                                                                    alt={child.label}
+                                                                    width={24}
+                                                                    height={24}
+                                                                    className="w-6 h-6 object-cover rounded-md flex-shrink-0"
+                                                                />
+                                                            )}
+                                                            <span>{child.label}</span>
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+
+                                {/* Quick button to view all categories */}
+                                <button
+                                    type="button"
+                                    onClick={() => setMobileTab("products")}
+                                    className="w-full flex items-center justify-between p-3.5 bg-primary/10 border border-primary/20 rounded-xl text-primary font-bold text-xs hover:bg-primary/20 transition-all mt-2"
+                                >
+                                    <span>Browse All Categories (ক্যাটাগরি সমূহ)</span>
+                                    <span>&rarr;</span>
+                                </button>
+                            </div>
+                        )}
                         {mobileTab === "products" && !selectedCategory && (
                             <div className="space-y-2.5">
                                 <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-1 pb-1">
