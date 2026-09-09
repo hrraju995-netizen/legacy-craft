@@ -180,35 +180,18 @@ export default function ProductDetails({ product, related = [] }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* Left: Dynamic Gallery Section */}
-          <div className="lg:col-span-7 flex flex-col-reverse sm:flex-row gap-4">
-            {/* Thumbnails */}
-            <div className="flex sm:flex-col gap-3 overflow-x-auto sm:overflow-y-auto shrink-0 max-h-[520px]">
-              {productImages.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedImageIndex(idx)}
-                  className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
-                    selectedImageIndex === idx
-                      ? "border-black shadow-sm scale-105"
-                      : "border-gray-200 hover:border-gray-400 opacity-70"
-                  }`}
-                >
-                  <Image src={img} alt={`${product.name} ${idx + 1}`} fill
-              sizes="80px" className="object-cover" />
-                </button>
-              ))}
-            </div>
-
-            {/* Main Image Banner */}
+          <div className="lg:col-span-7 flex flex-col gap-3 sm:gap-4">
+            {/* Main Big Image Banner */}
             <div
               onClick={() => setIsAllMediaOpen(true)}
-              className="relative flex-1 h-[420px] sm:h-[520px] bg-gray-100 rounded-3xl overflow-hidden group cursor-zoom-in border border-gray-100"
+              className="relative w-full aspect-square sm:aspect-[4/3] lg:aspect-auto lg:h-[540px] bg-[#f8f9fa] rounded-2xl sm:rounded-3xl overflow-hidden group cursor-zoom-in border border-gray-200/80 shadow-xs"
             >
               <Image
-                src={productImages[selectedImageIndex]}
+                src={productImages[selectedImageIndex] || product.thumbnail || FALLBACK_PRODUCT_IMAGE}
                 alt={product.name}
                 fill
-              sizes="(max-width: 1024px) 100vw, 58vw"
+                priority
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 70vw, 55vw"
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
 
@@ -216,13 +199,15 @@ export default function ProductDetails({ product, related = [] }) {
                 <>
                   <button
                     onClick={handlePrevImage}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 hover:bg-white text-gray-800 flex items-center justify-center shadow-md transition-all cursor-pointer hover:scale-110 z-10"
+                    aria-label="Previous image"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/85 hover:bg-white text-gray-800 flex items-center justify-center shadow-md transition-all cursor-pointer hover:scale-110 z-10"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
                   <button
                     onClick={handleNextImage}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/80 hover:bg-white text-gray-800 flex items-center justify-center shadow-md transition-all cursor-pointer hover:scale-110 z-10"
+                    aria-label="Next image"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/85 hover:bg-white text-gray-800 flex items-center justify-center shadow-md transition-all cursor-pointer hover:scale-110 z-10"
                   >
                     <ChevronRight className="w-5 h-5" />
                   </button>
@@ -234,42 +219,78 @@ export default function ProductDetails({ product, related = [] }) {
                   e.stopPropagation();
                   setIsAllMediaOpen(true);
                 }}
-                className="absolute bottom-4 right-4 bg-black/75 hover:bg-black text-white text-xs px-3.5 py-2 rounded-full flex items-center gap-2 font-medium backdrop-blur-md transition-all cursor-pointer shadow-lg hover:scale-105"
+                className="absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 bg-black/85 hover:bg-black text-white text-xs px-3.5 py-1.5 rounded-full flex items-center gap-1.5 font-medium backdrop-blur-md transition-all cursor-pointer shadow-md hover:scale-105 z-10"
               >
-                <Maximize2 className="w-3.5 h-3.5" /> All media ({productImages.length})
+                <svg
+                  className="w-3.5 h-3.5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="3" y="7" width="14" height="14" rx="2" />
+                  <path d="M7 3h12a2 2 0 0 1 2 2v12" />
+                </svg>
+                All media
               </button>
             </div>
+
+            {/* Thumbnails row directly below the main image */}
+            {productImages.length > 1 && (
+              <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto py-1.5 px-0.5 no-scrollbar">
+                {productImages.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedImageIndex(idx)}
+                    className={`relative w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-xl overflow-hidden shrink-0 border-2 transition-all cursor-pointer bg-gray-50 ${
+                      selectedImageIndex === idx
+                        ? "border-black ring-1 ring-black shadow-xs scale-102"
+                        : "border-gray-200 hover:border-gray-400 opacity-70 hover:opacity-100"
+                    }`}
+                  >
+                    <Image
+                      src={img}
+                      alt={`${product.name} ${idx + 1}`}
+                      fill
+                      sizes="80px"
+                      className="object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right: Dynamic Product Details */}
           <div className="lg:col-span-5 space-y-6">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full font-medium">
-                  {product.roomType}
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900">
+                {product.name}
+              </h1>
+
+              {/* Subcategory / RoomType Badge & Rating */}
+              <div className="flex items-center gap-2 mt-2 mb-3 flex-wrap">
+                <span className="text-xs bg-black text-white px-3 py-1 rounded-md font-semibold tracking-wide">
+                  {product.subcategory || product.roomType || product.category}
                 </span>
                 {product.isBestSeller && (
                   <span className="text-xs bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full font-semibold">
                     Best Seller
                   </span>
                 )}
-              </div>
-
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900">
-                {product.name}
-              </h1>
-
-              {/* Rating */}
-              <div className="flex items-center gap-2 mt-2">
-                <div className="flex items-center text-amber-400">
-                  <Star className="w-4 h-4 fill-current" />
-                  <span className="text-sm font-bold text-gray-900 ml-1">
-                    {product.rating}
-                  </span>
-                </div>
-                <span className="text-xs text-gray-400">
-                  ({product.reviewCount} reviews)
-                </span>
+                {product.rating && (
+                  <div className="flex items-center text-amber-400 ml-1">
+                    <Star className="w-3.5 h-3.5 fill-current" />
+                    <span className="text-xs font-bold text-gray-900 ml-1">
+                      {product.rating}
+                    </span>
+                    <span className="text-xs text-gray-400 ml-1">
+                      ({product.reviewCount || 0} reviews)
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Dynamic Price */}
@@ -288,7 +309,7 @@ export default function ProductDetails({ product, related = [] }) {
                   </span>
                 )}
               </div>
-              <p className="text-[11px] text-gray-400 mt-0.5">
+              <p className="text-[11px] text-gray-400 mt-1">
                 VAT, TAX, Delivery calculated at checkout
               </p>
 
@@ -303,32 +324,48 @@ export default function ProductDetails({ product, related = [] }) {
             {/* Dynamic Colors */}
             {product.colors && product.colors.length > 0 && (
               <div className="space-y-2">
-                <span className="text-xs font-semibold text-gray-600">
-                  Color: <span className="text-gray-900 font-bold">{selectedColor}</span>
+                <div className="text-xs font-semibold text-gray-600 flex items-center gap-1.5">
+                  <span>Color:</span>
+                  <span className="text-gray-900 font-bold">{selectedColor}</span>
                   {activeColorObj?.price && activeColorObj.price !== product.price && (
                     <span className="ml-2 text-xs font-bold text-primary">
                       (Tk {activeColorObj.price.toLocaleString()})
                     </span>
                   )}
-                </span>
-                <div className="flex gap-3">
-                  {product.colors.map((color, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => handleColorSelect(color)}
-                      title={`${color.name}${color.price ? ` - Tk ${color.price.toLocaleString()}` : ""}`}
-                      className={`w-9 h-9 rounded-lg border-2 transition-all p-0.5 cursor-pointer ${
-                        selectedColor === color.name
-                          ? "border-black scale-110 shadow-sm"
-                          : "border-gray-200 hover:border-gray-400"
-                      }`}
-                    >
-                      <div
-                        className="w-full h-full rounded"
-                        style={{ backgroundColor: color.code }}
-                      />
-                    </button>
-                  ))}
+                </div>
+                <div className="flex gap-2.5 flex-wrap">
+                  {product.colors.map((color, idx) => {
+                    const isSelected = selectedColor === color.name;
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => handleColorSelect(color)}
+                        title={`${color.name}${color.price ? ` - Tk ${color.price.toLocaleString()}` : ""}`}
+                        className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl border-2 transition-all p-0.5 cursor-pointer relative overflow-hidden ${
+                          isSelected
+                            ? "border-black ring-1 ring-black shadow-xs scale-105"
+                            : "border-gray-200 hover:border-gray-400 opacity-80 hover:opacity-100"
+                        }`}
+                      >
+                        {color.image ? (
+                          <div className="relative w-full h-full rounded-lg overflow-hidden bg-gray-50">
+                            <Image
+                              src={color.image}
+                              alt={color.name}
+                              fill
+                              sizes="48px"
+                              className="object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div
+                            className="w-full h-full rounded-lg shadow-inner"
+                            style={{ backgroundColor: color.code }}
+                          />
+                        )}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
