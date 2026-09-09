@@ -169,6 +169,19 @@ export async function getPage(slug) {
   }
 }
 
+export async function getArticles(category) {
+  const params = category ? { category } : {};
+  return (await apiFetchSafe("/articles", { params, revalidate: 60 }, [])) ?? [];
+}
+
+export async function getArticleBySlug(slug) {
+  try {
+    return await apiFetch(`/articles/${slug}`, { revalidate: 60 });
+  } catch {
+    return null;
+  }
+}
+
 /* ------------------------------------------------------------------ */
 /* Orders — called from the browser, so these hit the API directly     */
 /* ------------------------------------------------------------------ */

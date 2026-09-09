@@ -50,6 +50,8 @@ Route::prefix('v1')->group(function () {
     Route::get('site/config', [SiteController::class, 'config']);
     Route::get('site/home', [SiteController::class, 'home']);
     Route::get('pages/{page}', [SiteController::class, 'page']);
+    Route::get('articles', [SiteController::class, 'articles']);
+    Route::get('articles/{article}', [SiteController::class, 'article']);
 
     // Orders & Coupons
     Route::post('coupons/validate', function (Request $request) {

@@ -8,7 +8,7 @@ import NewArrivals from "@/components/home/NewArrivals";
 import RoomInspirationSlider from "@/components/home/RoomInspirationSlider";
 import ShopByCategory from "@/components/home/ShopByCategory";
 import WhoTrustsUsSection from "@/components/home/WhoTrustsUsSection";
-import { getAllProducts, getHomeData } from "@/lib/api";
+import { getAllProducts, getHomeData, getArticles } from "@/lib/api";
 import { sortProducts } from "@/lib/catalog";
 
 export const revalidate = 60;
@@ -34,7 +34,11 @@ const REGISTRY = {
 const DEFAULT_ORDER = Object.keys(REGISTRY).map((component) => ({ component }));
 
 export default async function HomePage() {
-  const [products, home] = await Promise.all([getAllProducts(), getHomeData()]);
+  const [products, home, articles] = await Promise.all([
+    getAllProducts(),
+    getHomeData(),
+    getArticles().catch(() => []),
+  ]);
 
   const sections = home?.sections?.length ? home.sections : DEFAULT_ORDER;
   const newArrivals = sortProducts(products, "newest").slice(0, 8);
@@ -60,7 +64,9 @@ export default async function HomePage() {
                 subtitle: section.subtitle,
                 partners: home?.partners ?? [],
               }
-            : ["ExploreSeries", "LatestInsightsSection"].includes(section.component)
+            : section.component === "LatestInsightsSection"
+            ? { articles }
+            : section.component === "ExploreSeries"
             ? { products }
             : {};
 

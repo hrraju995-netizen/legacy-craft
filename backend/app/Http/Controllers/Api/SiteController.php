@@ -159,6 +159,74 @@ class SiteController extends Controller
         ]);
     }
 
+    public function articles(\Illuminate\Http\Request $request)
+    {
+        $category = $request->query('category');
+        $limit = (int) $request->query('limit', 30);
+
+        $query = \App\Models\Article::published();
+        if (! empty($category)) {
+            $query->where('category', $category);
+        }
+
+        $articles = $query->take($limit)->get()->map(function (\App\Models\Article $a) {
+            return [
+                'id' => $a->id,
+                'title' => $a->title,
+                'banglaTitle' => $a->bangla_title,
+                'slug' => $a->slug,
+                'category' => $a->category,
+                'date' => $a->published_at ? $a->published_at->format('M d, Y') : $a->created_at->format('M d, Y'),
+                'readTime' => $a->read_time ?: '5 min read',
+                'image' => \App\Models\Product::resolveImageUrl($a->image) ?: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&fit=crop',
+                'excerpt' => $a->excerpt,
+                'content' => $a->content,
+                'author' => [
+                    'name' => $a->author_name ?: 'Look Studio Design Team',
+                    'role' => $a->author_role ?: 'Senior Interior Architect',
+                    'avatar' => \App\Models\Product::resolveImageUrl($a->author_avatar) ?: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop',
+                ],
+                'tags' => $a->tags ?: [],
+                'relatedCategorySlug' => $a->related_category_slug,
+                'isFeatured' => (bool) $a->is_featured,
+            ];
+        });
+
+        return response()->json($articles);
+    }
+
+    public function article(string $slug)
+    {
+        $a = \App\Models\Article::published()->where('slug', $slug)->first();
+        if (! $a) {
+            abort(404, 'Article not found');
+        }
+
+        return response()->json([
+            'id' => $a->id,
+            'title' => $a->title,
+            'banglaTitle' => $a->bangla_title,
+            'slug' => $a->slug,
+            'category' => $a->category,
+            'date' => $a->published_at ? $a->published_at->format('M d, Y') : $a->created_at->format('M d, Y'),
+            'readTime' => $a->read_time ?: '5 min read',
+            'image' => \App\Models\Product::resolveImageUrl($a->image) ?: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=1200&fit=crop',
+            'excerpt' => $a->excerpt,
+            'content' => $a->content,
+            'author' => [
+                'name' => $a->author_name ?: 'Look Studio Design Team',
+                'role' => $a->author_role ?: 'Senior Interior Architect',
+                'avatar' => \App\Models\Product::resolveImageUrl($a->author_avatar) ?: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop',
+            ],
+            'tags' => $a->tags ?: [],
+            'relatedCategorySlug' => $a->related_category_slug,
+            'meta' => [
+                'title' => $a->meta_title ?: $a->title,
+                'description' => $a->meta_description ?: $a->excerpt,
+            ],
+        ]);
+    }
+
     /** Recursively flatten menu items into the tree the frontend renders. */
     private function mapItems($items): array
     {

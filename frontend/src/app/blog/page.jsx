@@ -3,7 +3,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { Calendar, Clock, ArrowRight, BookOpen, Search, Sparkles, ChevronRight } from "lucide-react";
 import { getAllBlogPosts, getBlogCategories } from "@/lib/blogs";
+import { getArticles } from "@/lib/api";
 import { siteConfig } from "@/config/site";
+
+export const revalidate = 60;
 
 export const metadata = {
   title: "Blog & Design Insights — Handcrafted Furniture Ideas",
@@ -19,9 +22,11 @@ export const metadata = {
   },
 };
 
-export default function BlogIndexPage() {
-  const posts = getAllBlogPosts();
-  const categories = getBlogCategories();
+export default async function BlogIndexPage() {
+  const apiArticles = await getArticles().catch(() => []);
+  const fallbackPosts = getAllBlogPosts();
+  const posts = apiArticles.length > 0 ? apiArticles : fallbackPosts;
+  const categories = Array.from(new Set(posts.map((p) => p.category).filter(Boolean)));
   const featured = posts[0];
   const gridPosts = posts.slice(1);
 

@@ -6,8 +6,11 @@ import Link from "next/link";
 import { Calendar, ArrowRight, BookOpen, Clock } from "lucide-react";
 import { BLOG_POSTS } from "@/lib/blogs";
 
-const LatestInsightsSection = () => {
-  const insightsData = BLOG_POSTS.slice(0, 3);
+const LatestInsightsSection = ({ articles = [] }) => {
+  const insightsData =
+    Array.isArray(articles) && articles.length > 0
+      ? articles.slice(0, 3)
+      : BLOG_POSTS.slice(0, 3);
 
   return (
     <section className="py-16 bg-white">

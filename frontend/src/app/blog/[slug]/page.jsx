@@ -17,10 +17,15 @@ import {
   Sparkles,
 } from "lucide-react";
 import { getBlogPostBySlug, getRelatedBlogPosts, getAllBlogPosts } from "@/lib/blogs";
+import { getArticleBySlug, getArticles } from "@/lib/api";
 import { siteConfig } from "@/config/site";
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
-  const posts = getAllBlogPosts();
+  const apiArticles = await getArticles().catch(() => []);
+  const fallbackPosts = getAllBlogPosts();
+  const posts = apiArticles.length > 0 ? apiArticles : fallbackPosts;
   return posts.map((post) => ({
     slug: post.slug,
   }));
@@ -28,7 +33,10 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const post = getBlogPostBySlug(slug);
+  let post = await getArticleBySlug(slug).catch(() => null);
+  if (!post) {
+    post = getBlogPostBySlug(slug);
+  }
 
   if (!post) {
     return { title: "Article Not Found | Look Studio BD" };
@@ -61,7 +69,10 @@ export async function generateMetadata({ params }) {
 
 export default async function BlogPostPage({ params }) {
   const { slug } = await params;
-  const post = getBlogPostBySlug(slug);
+  let post = await getArticleBySlug(slug).catch(() => null);
+  if (!post) {
+    post = getBlogPostBySlug(slug);
+  }
 
   if (!post) {
     notFound();
@@ -182,79 +193,86 @@ export default async function BlogPostPage({ params }) {
           {post.excerpt}
         </div>
 
-        {/* Structured Body Content */}
-        <div className="space-y-8 text-gray-800 text-base leading-relaxed">
-          {post.content?.map((block, idx) => {
-            if (block.type === "heading") {
-              return (
-                <h2
-                  key={idx}
-                  className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight pt-4 border-b border-gray-100 pb-2"
-                >
-                  {block.text}
-                </h2>
-              );
-            }
+        {/* Article Body Content */}
+        {typeof post.content === "string" ? (
+          <div
+            className="prose prose-base sm:prose-lg max-w-none text-gray-800 leading-relaxed space-y-4 [&>h2]:text-2xl [&>h2]:font-bold [&>h2]:text-gray-900 [&>h2]:pt-4 [&>h2]:border-b [&>h2]:border-gray-100 [&>h2]:pb-2 [&>h3]:text-xl [&>h3]:font-bold [&>h3]:text-gray-900 [&>h3]:pt-3 [&>p]:text-gray-700 [&>p]:leading-relaxed [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 [&>blockquote]:border-l-4 [&>blockquote]:border-primary [&>blockquote]:pl-4 [&>blockquote]:italic [&>blockquote]:text-gray-700"
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          />
+        ) : (
+          <div className="space-y-8 text-gray-800 text-base leading-relaxed">
+            {post.content?.map((block, idx) => {
+              if (block.type === "heading") {
+                return (
+                  <h2
+                    key={idx}
+                    className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight pt-4 border-b border-gray-100 pb-2"
+                  >
+                    {block.text}
+                  </h2>
+                );
+              }
 
-            if (block.type === "paragraph") {
-              return (
-                <p key={idx} className="text-gray-700 leading-relaxed text-sm sm:text-base">
-                  {block.text}
-                </p>
-              );
-            }
-
-            if (block.type === "tip") {
-              return (
-                <div
-                  key={idx}
-                  className="p-5 sm:p-6 bg-white border border-primary/30 rounded-2xl shadow-xs my-6 relative overflow-hidden"
-                >
-                  <div className="flex items-start gap-3.5">
-                    <div className="p-2 rounded-xl bg-primary/10 text-primary shrink-0 mt-0.5">
-                      <Lightbulb className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-sm text-gray-900">{block.title}</h4>
-                      <p className="mt-1.5 text-xs sm:text-sm text-gray-600 leading-relaxed">
-                        {block.text}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              );
-            }
-
-            if (block.type === "quote") {
-              return (
-                <blockquote
-                  key={idx}
-                  className="my-8 p-6 bg-white rounded-2xl border border-gray-200 shadow-xs relative"
-                >
-                  <Quote className="w-8 h-8 text-primary/30 mb-2" />
-                  <p className="text-base sm:text-lg italic font-serif text-gray-800 leading-relaxed">
+              if (block.type === "paragraph") {
+                return (
+                  <p key={idx} className="text-gray-700 leading-relaxed text-sm sm:text-base">
                     {block.text}
                   </p>
-                </blockquote>
-              );
-            }
+                );
+              }
 
-            if (block.type === "list") {
-              return (
-                <ul key={idx} className="space-y-3 my-4">
-                  {block.items?.map((item, itemIdx) => (
-                    <li key={itemIdx} className="flex items-start gap-3 text-sm text-gray-700">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              );
-            }
+              if (block.type === "tip") {
+                return (
+                  <div
+                    key={idx}
+                    className="p-5 sm:p-6 bg-white border border-primary/30 rounded-2xl shadow-xs my-6 relative overflow-hidden"
+                  >
+                    <div className="flex items-start gap-3.5">
+                      <div className="p-2 rounded-xl bg-primary/10 text-primary shrink-0 mt-0.5">
+                        <Lightbulb className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-gray-900">{block.title}</h4>
+                        <p className="mt-1.5 text-xs sm:text-sm text-gray-600 leading-relaxed">
+                          {block.text}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
 
-            return null;
-          })}
-        </div>
+              if (block.type === "quote") {
+                return (
+                  <blockquote
+                    key={idx}
+                    className="my-8 p-6 bg-white rounded-2xl border border-gray-200 shadow-xs relative"
+                  >
+                    <Quote className="w-8 h-8 text-primary/30 mb-2" />
+                    <p className="text-base sm:text-lg italic font-serif text-gray-800 leading-relaxed">
+                      {block.text}
+                    </p>
+                  </blockquote>
+                );
+              }
+
+              if (block.type === "list") {
+                return (
+                  <ul key={idx} className="space-y-3 my-4">
+                    {block.items?.map((item, itemIdx) => (
+                      <li key={itemIdx} className="flex items-start gap-3 text-sm text-gray-700">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                );
+              }
+
+              return null;
+            })}
+          </div>
+        )}
 
         {/* Tags Row */}
         {post.tags?.length > 0 && (

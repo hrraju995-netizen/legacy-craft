@@ -204,6 +204,38 @@ if (file_exists($sqliteFile) && extension_loaded('pdo_sqlite')) {
             }
         }
 
+        // Ensure articles table exists
+        try {
+            $pdo->query("SELECT 1 FROM articles LIMIT 1");
+            $results[] = ['type' => 'success', 'msg' => "✅ Database table <code>articles</code> is active and ready for blog posting."];
+        } catch (\Throwable $e) {
+            $pdo->exec("CREATE TABLE IF NOT EXISTS articles (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title VARCHAR(255) NOT NULL,
+                bangla_title VARCHAR(255) NULL,
+                slug VARCHAR(255) NOT NULL UNIQUE,
+                category VARCHAR(255) DEFAULT 'Interior Design',
+                image VARCHAR(255) NULL,
+                excerpt TEXT NULL,
+                content TEXT NULL,
+                author_name VARCHAR(255) DEFAULT 'Look Studio Design Team',
+                author_role VARCHAR(255) DEFAULT 'Senior Interior Architect',
+                author_avatar VARCHAR(255) NULL,
+                read_time VARCHAR(50) DEFAULT '5 min read',
+                tags TEXT NULL,
+                related_category_slug VARCHAR(255) NULL,
+                is_published INTEGER DEFAULT 1,
+                is_featured INTEGER DEFAULT 0,
+                published_at DATETIME NULL,
+                meta_title VARCHAR(255) NULL,
+                meta_description TEXT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )");
+            \App\Models\Article::seedDefaults();
+            $results[] = ['type' => 'success', 'msg' => "✅ Created <code>articles</code> database table and seeded default articles for blog posts."];
+        }
+
         if ($cleanedRows > 0) {
             $results[] = [
                 'type' => 'success',
