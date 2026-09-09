@@ -50,7 +50,15 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight('44px')
             ->favicon(function () {
                 $rawFavicon = \App\Models\Setting::get('favicon') ?: \App\Models\Setting::get('logo');
-                return $rawFavicon ? \App\Models\Product::resolveImageUrl($rawFavicon) : null;
+                if (! $rawFavicon) {
+                    return null;
+                }
+                $url = \App\Models\Product::resolveImageUrl($rawFavicon);
+                if (! $url) {
+                    return null;
+                }
+                $v = substr(md5((string) $rawFavicon), 0, 8);
+                return $url . (str_contains($url, '?') ? '&' : '?') . 'v=' . $v;
             })
             ->colors([
                 // Matches the storefront's --primary (#9f582c).
@@ -76,7 +84,7 @@ class AdminPanelProvider extends PanelProvider
                 \Filament\Actions\Action::make('viewSite')
                     ->label('View site')
                     ->icon('heroicon-o-globe-alt')
-                    ->url(fn () => config('app.storefront_url'))
+                    ->url(fn () => config('app.storefront_url', 'https://lookstudiobd.com'))
                     ->openUrlInNewTab(),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')

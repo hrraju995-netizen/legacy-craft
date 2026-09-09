@@ -120,9 +120,13 @@ class Product extends Model
     }
 
     /**
-     * Seeded products hold absolute Unsplash URLs; admin uploads hold paths
-     * relative to the public disk. Both must reach the storefront as absolute
-     * URLs, so only the relative ones get the storage prefix.
+     * Resolves an image path or URL into a clean, working public URL.
+     * Handles:
+     * - External URLs (Unsplash, Cloudinary, etc.)
+     * - Stripping dead localhost / 127.0.0.1 hostnames saved during seeding/local dev
+     * - Preventing double storage prefixes (/storage/storage/...)
+     * - Windows backslashes
+     * - Direct public disk relative paths
      */
     public static function resolveImageUrl(?string $path): ?string
     {
@@ -130,11 +134,60 @@ class Product extends Model
             return null;
         }
 
-        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
-            return $path;
+        // 0. Handle JSON-encoded arrays/strings from Filament uploads (e.g. ["settings/xxx.png"])
+        if (is_string($path) && (str_starts_with($path, '["') || str_starts_with($path, '[\"'))) {
+            $decoded = json_decode($path, true);
+            if (is_array($decoded)) {
+                $path = (string) (collect($decoded)->flatten()->filter()->first() ?? '');
+            }
         }
 
-        return \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+        if (blank($path)) {
+            return null;
+        }
+
+        // 1. Check if path has localhost or 127.0.0.1 and strip it
+        if (preg_match('#^https?://(localhost|127\.0\.0\.1)(:\d+)?/(.*)$#i', $path, $matches)) {
+            $path = $matches[3];
+        }
+
+        // 2. Normalize slashes
+        $path = str_replace('\\', '/', trim($path));
+
+        // 3. If it's a real external URL (e.g. Unsplash, CDN), return as-is
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            // Upgrade insecure api.lookstudiobd.com to https
+            if (str_starts_with($path, 'http://api.lookstudiobd.com')) {
+                $path = 'https://api.lookstudiobd.com' . substr($path, 25);
+            }
+            $appUrl = rtrim(config('app.url', 'https://api.lookstudiobd.com'), '/');
+            // If it starts with our own domain, normalize it to avoid double storage
+            if (str_starts_with($path, $appUrl)) {
+                $path = substr($path, strlen($appUrl));
+            } else {
+                return $path;
+            }
+        }
+
+        // 4. Strip leading slashes and redundant storage/ or public/ prefixes
+        $clean = ltrim($path, '/');
+        while (str_starts_with($clean, 'storage/')) {
+            $clean = substr($clean, 8);
+        }
+        while (str_starts_with($clean, 'public/')) {
+            $clean = substr($clean, 7);
+        }
+
+        if (blank($clean)) {
+            return null;
+        }
+
+        // 5. Generate clean URL using Storage public disk with HTTPS
+        $baseUrl = rtrim(config('app.url', 'https://api.lookstudiobd.com'), '/');
+        if (str_starts_with($baseUrl, 'http://api.')) {
+            $baseUrl = 'https://' . substr($baseUrl, 7);
+        }
+        return $baseUrl . '/storage/' . $clean;
     }
 
     public function getInStockAttribute(): bool

@@ -22,6 +22,10 @@ const nextConfig = {
   async rewrites() {
     return [
       {
+        source: "/favicon.ico",
+        destination: "https://api.lookstudiobd.com/favicon.ico",
+      },
+      {
         source: "/api/v1/:path*",
         destination: "https://api.lookstudiobd.com/api/v1/:path*",
       },

@@ -58,7 +58,7 @@ return [
     | Where the Next.js storefront runs. Used by the admin panel's
     | "View on site" buttons.
     */
-    'storefront_url' => env('STOREFRONT_URL', 'http://localhost:3000'),
+    'storefront_url' => env('STOREFRONT_URL', env('FRONTEND_URL', 'https://lookstudiobd.com')),
 
     /*
     |--------------------------------------------------------------------------

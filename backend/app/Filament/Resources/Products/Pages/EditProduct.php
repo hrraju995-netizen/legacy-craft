@@ -20,7 +20,7 @@ class EditProduct extends EditRecord
                 ->label('View on site')
                 ->icon('heroicon-o-arrow-top-right-on-square')
                 ->color('gray')
-                ->url(fn () => rtrim(config('app.storefront_url'), '/').'/products/'.$this->record->slug)
+                ->url(fn () => rtrim(config('app.storefront_url', 'https://lookstudiobd.com'), '/').'/products/'.$this->record->slug)
                 ->openUrlInNewTab(),
 
             DeleteAction::make(),

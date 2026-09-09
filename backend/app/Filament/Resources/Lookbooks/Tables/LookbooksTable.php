@@ -20,7 +20,7 @@ class LookbooksTable
             ->columns([
                 ImageColumn::make('image')
                     ->label('Photo')
-                    ->disk('public')
+                    ->state(fn ($record) => \App\Models\Product::resolveImageUrl($record->image))
                     ->height(56)
                     ->width(75)
                     ->extraImgAttributes(['style' => 'object-fit: cover; border-radius: 8px;']),

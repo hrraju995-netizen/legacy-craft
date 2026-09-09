@@ -20,7 +20,8 @@ class RoomsTable
                     ->searchable(),
                 TextColumn::make('slug')
                     ->searchable(),
-                ImageColumn::make('image'),
+                ImageColumn::make('image')
+                    ->state(fn ($record) => \App\Models\Product::resolveImageUrl($record->image)),
                 TextColumn::make('position')
                     ->numeric()
                     ->sortable(),

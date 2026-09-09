@@ -49,8 +49,26 @@ class ManageSettings extends Page
 
     public function mount(): void
     {
+        Setting::firstOrCreate(
+            ['key' => 'favicon'],
+            [
+                'group' => 'general',
+                'type' => 'image',
+                'label' => 'Website Favicon',
+                'hint' => 'Upload browser tab favicon (.png, .ico, .svg, .webp). Recommended size 32x32 or 64x64.',
+                'position' => 3,
+            ]
+        );
+
         $this->form->fill(
-            Setting::all()->mapWithKeys(fn (Setting $s) => [$s->key => $s->castValue()])->all()
+            Setting::all()->mapWithKeys(function (Setting $s) {
+                $val = $s->castValue();
+                if ($s->type === 'image' && is_string($val) && str_starts_with($val, '["')) {
+                    $decoded = json_decode($val, true);
+                    $val = is_array($decoded) && ! empty($decoded[0]) ? $decoded[0] : $val;
+                }
+                return [$s->key => $val];
+            })->all()
         );
     }
 
@@ -72,9 +90,43 @@ class ManageSettings extends Page
     /** Turn each settings row into the right Filament field for its type. */
     private function fieldsFor(string $group): array
     {
+        if ($group === 'general') {
+            Setting::firstOrCreate(
+                ['key' => 'favicon'],
+                [
+                    'group' => 'general',
+                    'type' => 'image',
+                    'label' => 'Website Favicon',
+                    'hint' => 'Upload browser tab favicon (.png, .ico, .svg, .webp). Recommended size 32x32 or 64x64.',
+                    'position' => 3,
+                ]
+            );
+        }
+
         return Setting::where('group', $group)->orderBy('position')->get()
             ->map(function (Setting $setting) {
                 $label = $setting->label ?: str($setting->key)->replace('_', ' ')->title()->value();
+
+                if ($setting->key === 'favicon') {
+                    return FileUpload::make($setting->key)
+                        ->label('Website Favicon (ব্রাউজার ট্যাব আইকন)')
+                        ->image()
+                        ->directory('settings')
+                        ->visibility('public')
+                        ->imagePreviewHeight('48')
+                        ->acceptedFileTypes(['image/png', 'image/x-icon', 'image/vnd.microsoft.icon', 'image/svg+xml', 'image/jpeg', 'image/webp', 'image/gif'])
+                        ->helperText('Upload tab icon (.png, .ico, .svg). Changes will reflect on both Dashboard and Storefront tabs.');
+                }
+
+                if ($setting->key === 'logo') {
+                    return FileUpload::make($setting->key)
+                        ->label($label)
+                        ->image()
+                        ->directory('settings')
+                        ->visibility('public')
+                        ->imagePreviewHeight('48')
+                        ->helperText($setting->hint);
+                }
 
                 return match ($setting->type) {
                     'boolean' => Toggle::make($setting->key)->label($label)->helperText($setting->hint),
@@ -97,8 +149,32 @@ class ManageSettings extends Page
                 continue;
             }
 
+            if ($setting->type === 'image') {
+                if (is_array($value)) {
+                    $first = collect($value)->flatten()->filter()->first();
+                    $value = is_string($first) ? $first : null;
+                }
+                if (is_string($value) && str_starts_with($value, '["')) {
+                    $decoded = json_decode($value, true);
+                    $value = is_array($decoded) && ! empty($decoded[0]) ? $decoded[0] : $value;
+                }
+            }
+
             $setting->value = is_array($value) ? json_encode($value) : $value;
             $setting->save();
+
+            // When favicon is saved, copy to public/favicon.ico for direct webserver serving
+            if ($setting->key === 'favicon' && ! empty($setting->value)) {
+                try {
+                    $clean = ltrim(str_replace(['\\', 'public/', 'storage/'], ['/', '', ''], (string) $setting->value), '/');
+                    $disk = \Illuminate\Support\Facades\Storage::disk('public');
+                    if ($disk->exists($clean)) {
+                        @copy($disk->path($clean), public_path('favicon.ico'));
+                    }
+                } catch (\Throwable $e) {
+                    // Ignore copy error
+                }
+            }
         }
 
         \Illuminate\Support\Facades\Cache::forget('settings.all');

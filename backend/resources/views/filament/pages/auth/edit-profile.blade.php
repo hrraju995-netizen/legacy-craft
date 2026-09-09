@@ -62,7 +62,7 @@
             </div>
 
             <div style="display: flex; align-items: center; gap: 10px;">
-                <a href="{{ config('app.storefront_url') }}" 
+                <a href="{{ config('app.storefront_url', 'https://lookstudiobd.com') }}" 
                    target="_blank" 
                    style="display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 10px; background: rgba(255,255,255,0.1); color: #ffffff; font-size: 12px; font-weight: 600; text-decoration: none; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: all 0.15s ease;"
                    onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">

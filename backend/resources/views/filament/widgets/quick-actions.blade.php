@@ -69,7 +69,7 @@
                 </a>
 
                 <!-- View Live Storefront -->
-                <a href="http://localhost:3000" target="_blank"
+                <a href="{{ config('app.storefront_url', 'https://lookstudiobd.com') }}" target="_blank"
                    style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 10px; background: rgba(255,255,255,0.04); color: #a8a29e; font-size: 12px; font-weight: 500; text-decoration: none; border: 1px solid rgba(255,255,255,0.1); transition: color 0.15s ease;"
                    onmouseover="this.style.color='#ffffff'; this.style.borderColor='rgba(255,255,255,0.25)'" onmouseout="this.style.color='#a8a29e'; this.style.borderColor='rgba(255,255,255,0.1)'">
                     <svg style="width: 14px; height: 14px; color: #60a5fa;" fill="none" stroke="currentColor" viewBox="0 0 24 24">

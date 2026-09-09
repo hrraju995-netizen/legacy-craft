@@ -19,7 +19,7 @@ class BannersTable
             ->columns([
                 ImageColumn::make('image')
                     ->label('Image')
-                    ->disk('public')
+                    ->state(fn ($record) => \App\Models\Product::resolveImageUrl($record->image))
                     ->height(48)
                     ->width(75)
                     ->extraImgAttributes(['style' => 'object-fit: cover; border-radius: 6px;']),

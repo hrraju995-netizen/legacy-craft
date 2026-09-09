@@ -175,28 +175,53 @@ class CheckoutController extends Controller
     /** GET /api/orders/{orderNumber}/track — public order lookup by order number and optional phone. */
     public function track(Request $request, string $orderNumber)
     {
-        $phone = $request->input('phone');
+        $corsHeaders = [
+            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Methods' => 'GET, OPTIONS',
+            'Access-Control-Allow-Headers' => 'Content-Type, Accept, Authorization, X-Requested-With',
+        ];
+
+        if ($request->isMethod('OPTIONS')) {
+            return response('', 204, $corsHeaders);
+        }
+
+        $rawPhone = trim((string) $request->input('phone'));
         $cleanOrderNumber = trim($orderNumber);
 
-        $query = Order::where('order_number', $cleanOrderNumber);
-        
-        if ($phone) {
-            $digits = preg_replace('/[^0-9]/', '', $phone);
-            $lastDigits = substr($digits, -10);
-            $query->where('customer_phone', 'like', "%{$lastDigits}%");
+        // Case-insensitive order number search
+        $query = Order::where(function ($q) use ($cleanOrderNumber) {
+            $q->where('order_number', $cleanOrderNumber)
+              ->orWhere('order_number', strtoupper($cleanOrderNumber))
+              ->orWhere('order_number', strtolower($cleanOrderNumber));
+        });
+
+        // Only filter by phone if provided and not placeholder text (e.g. 01XXXXXXXXX)
+        $hasRealPhone = ! empty($rawPhone) && ! str_contains($rawPhone, 'X') && ! str_contains($rawPhone, 'x');
+        if ($hasRealPhone) {
+            $digits = preg_replace('/[^0-9]/', '', $rawPhone);
+            if (strlen($digits) >= 6) {
+                $lastDigits = substr($digits, -10);
+                $query->where('customer_phone', 'like', "%{$lastDigits}%");
+            }
         }
 
         $order = $query->with(['items', 'consignments.courier', 'statusHistories'])->first();
 
+        $corsHeaders = [
+            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Methods' => 'GET, OPTIONS',
+            'Access-Control-Allow-Headers' => 'Content-Type, Accept, Authorization, X-Requested-With',
+        ];
+
         if (! $order) {
             return response()->json([
-                'message' => 'No order found with this Order Number' . ($phone ? ' and Phone Number.' : '.'),
-            ], 404);
+                'message' => 'No order found with Order Number: ' . $cleanOrderNumber . ($hasRealPhone ? ' and Phone: ' . $rawPhone : '. Please check the number.'),
+            ], 404, $corsHeaders);
         }
 
         $phoneVerified = false;
-        if ($phone) {
-            $digits = preg_replace('/[^0-9]/', '', $phone);
+        if ($hasRealPhone) {
+            $digits = preg_replace('/[^0-9]/', '', $rawPhone);
             $lastDigits = substr($digits, -10);
             $orderDigits = preg_replace('/[^0-9]/', '', (string) $order->customer_phone);
             if (! empty($lastDigits) && str_ends_with($orderDigits, $lastDigits)) {
@@ -254,7 +279,7 @@ class CheckoutController extends Controller
                 'comment' => $h->comment,
                 'time' => $h->created_at->format('M d, Y h:i A'),
             ]),
-        ]);
+        ], 200, $corsHeaders);
     }
 }
 

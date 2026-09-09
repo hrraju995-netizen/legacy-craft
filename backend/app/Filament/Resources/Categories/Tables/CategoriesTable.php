@@ -23,9 +23,10 @@ class CategoriesTable
                     ->searchable(),
                 TextColumn::make('slug')
                     ->searchable(),
-                ImageColumn::make('image'),
-                TextColumn::make('banner')
-                    ->searchable(),
+                ImageColumn::make('image')
+                    ->state(fn ($record) => \App\Models\Product::resolveImageUrl($record->image)),
+                ImageColumn::make('banner')
+                    ->state(fn ($record) => \App\Models\Product::resolveImageUrl($record->banner)),
                 TextColumn::make('position')
                     ->numeric()
                     ->sortable(),

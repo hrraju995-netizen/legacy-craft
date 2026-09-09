@@ -28,15 +28,25 @@ class SiteController extends Controller
         $payload = Cache::remember('api.site.config', 300, fn () => [
             'settings' => [
                 'general' => collect(Setting::group('general'))->map(function ($val, $key) {
-                    if ($key === 'logo' && $val) {
-                        return \App\Models\Product::resolveImageUrl($val);
+                    if (in_array($key, ['logo', 'favicon', 'footer_logo', 'invoice_logo']) && $val) {
+                        $resolved = \App\Models\Product::resolveImageUrl($val);
+                        if ($resolved && $key === 'favicon') {
+                            $v = substr(md5((string) $val), 0, 8);
+                            return $resolved . (str_contains($resolved, '?') ? '&' : '?') . 'v=' . $v;
+                        }
+                        return $resolved;
                     }
                     return $val;
                 })->all(),
                 'topbar' => Setting::group('topbar'),
                 'header' => Setting::group('header'),
                 'footer' => Setting::group('footer'),
-                'seo' => Setting::group('seo'),
+                'seo' => collect(Setting::group('seo'))->map(function ($val, $key) {
+                    if (in_array($key, ['og_image', 'meta_image']) && $val) {
+                        return \App\Models\Product::resolveImageUrl($val);
+                    }
+                    return $val;
+                })->all(),
                 'social' => Setting::group('social'),
                 'checkout' => Setting::group('checkout'),
                 'chat' => Setting::group('chat'),
@@ -83,10 +93,10 @@ class SiteController extends Controller
                     'title' => $b->title,
                     'subtitle' => $b->subtitle,
                     'badge' => $b->badge,
-                    'image' => \App\Models\Product::resolveImageUrl($b->image) ?? $b->image,
-                    'mobileImage' => \App\Models\Product::resolveImageUrl($b->mobile_image) ?? $b->mobile_image,
+                    'image' => \App\Models\Product::resolveImageUrl($b->image),
+                    'mobileImage' => \App\Models\Product::resolveImageUrl($b->mobile_image),
                     'bgColor' => $b->bg_color,
-                    'bgImage' => \App\Models\Product::resolveImageUrl($b->bg_image) ?? $b->bg_image,
+                    'bgImage' => \App\Models\Product::resolveImageUrl($b->bg_image),
                     'textColor' => $b->text_color,
                     'buttonColor' => $b->button_color,
                     'buttonTextColor' => $b->button_text_color,
@@ -100,10 +110,11 @@ class SiteController extends Controller
                     'slug' => $c->slug,
                     'title' => $c->name,
                     'image' => \App\Models\Product::resolveImageUrl($c->image),
+                    'banner' => \App\Models\Product::resolveImageUrl($c->banner),
                     'count' => $c->products_count,
                 ])->values()->all(),
             'rooms' => Room::where('is_active', true)->orderBy('position')->get()
-                ->map(fn ($r) => ['slug' => $r->slug, 'title' => $r->name, 'image' => $r->image])
+                ->map(fn ($r) => ['slug' => $r->slug, 'title' => $r->name, 'image' => \App\Models\Product::resolveImageUrl($r->image)])
                 ->values()->all(),
             'lookbooks' => Lookbook::where('is_active', true)->with('hotspots.product.images')
                 ->orderBy('position')->get()->map(fn ($l) => [
@@ -140,7 +151,7 @@ class SiteController extends Controller
             'content' => $page->content,
             'blocks' => $page->blocks,
             'template' => $page->template,
-            'featuredImage' => $page->featured_image,
+            'featuredImage' => \App\Models\Product::resolveImageUrl($page->featured_image),
             'meta' => [
                 'title' => $page->meta_title ?: $page->title,
                 'description' => $page->meta_description ?: $page->excerpt,

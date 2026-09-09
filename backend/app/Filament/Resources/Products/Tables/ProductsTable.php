@@ -114,7 +114,7 @@ class ProductsTable
                     ->label('View')
                     ->icon('heroicon-o-arrow-top-right-on-square')
                     ->color('gray')
-                    ->url(fn (Product $record) => rtrim(config('app.storefront_url'), '/').'/products/'.$record->slug)
+                    ->url(fn (Product $record) => rtrim(config('app.storefront_url', 'https://lookstudiobd.com'), '/').'/products/'.$record->slug)
                     ->openUrlInNewTab()
                     ->visible(fn (Product $record) => $record->is_active),
 

@@ -103,7 +103,7 @@ Route::prefix('v1')->group(function () {
 
     Route::post('checkout', [CheckoutController::class, 'store'])
         ->middleware('throttle:10,1');
-    Route::get('orders/{orderNumber}/track', [CheckoutController::class, 'track'])
+    Route::match(['get', 'options'], 'orders/{orderNumber}/track', [CheckoutController::class, 'track'])
         ->middleware('throttle:30,1');
 
 
