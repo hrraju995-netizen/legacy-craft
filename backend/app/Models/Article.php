@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class Article extends Model
@@ -23,11 +21,6 @@ class Article extends Model
 
     protected static function booted(): void
     {
-        // Self-heal: Ensure table exists even before manual migration
-        if (! Schema::hasTable('articles')) {
-            self::createSchema();
-        }
-
         static::saving(function (self $article) {
             if (blank($article->slug)) {
                 $article->slug = Str::slug($article->title);
@@ -36,34 +29,16 @@ class Article extends Model
                 $article->published_at = now();
             }
         });
-    }
 
-    public static function createSchema(): void
-    {
-        Schema::create('articles', function (Blueprint $table) {
-            $table->id();
-            $table->string('title');
-            $table->string('bangla_title')->nullable();
-            $table->string('slug')->unique();
-            $table->string('category')->default('Interior Design');
-            $table->string('image')->nullable();
-            $table->text('excerpt')->nullable();
-            $table->longText('content')->nullable();
-            $table->string('author_name')->default('Look Studio Design Team');
-            $table->string('author_role')->default('Senior Interior Architect');
-            $table->string('author_avatar')->nullable();
-            $table->string('read_time')->default('5 min read');
-            $table->json('tags')->nullable();
-            $table->string('related_category_slug')->nullable();
-            $table->boolean('is_published')->default(true);
-            $table->boolean('is_featured')->default(false);
-            $table->dateTime('published_at')->nullable();
-            $table->string('meta_title')->nullable();
-            $table->text('meta_description')->nullable();
-            $table->timestamps();
+        static::saved(function () {
+            \Illuminate\Support\Facades\Cache::forget('api.site.home');
+            \Illuminate\Support\Facades\Cache::forget('api.site.config');
         });
 
-        self::seedDefaults();
+        static::deleted(function () {
+            \Illuminate\Support\Facades\Cache::forget('api.site.home');
+            \Illuminate\Support\Facades\Cache::forget('api.site.config');
+        });
     }
 
     public static function seedDefaults(): void

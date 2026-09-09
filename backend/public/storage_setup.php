@@ -206,9 +206,6 @@ if (file_exists($sqliteFile) && extension_loaded('pdo_sqlite')) {
 
         // Ensure articles table exists
         try {
-            $pdo->query("SELECT 1 FROM articles LIMIT 1");
-            $results[] = ['type' => 'success', 'msg' => "✅ Database table <code>articles</code> is active and ready for blog posting."];
-        } catch (\Throwable $e) {
             $pdo->exec("CREATE TABLE IF NOT EXISTS articles (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 title VARCHAR(255) NOT NULL,
@@ -232,8 +229,77 @@ if (file_exists($sqliteFile) && extension_loaded('pdo_sqlite')) {
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )");
-            \App\Models\Article::seedDefaults();
-            $results[] = ['type' => 'success', 'msg' => "✅ Created <code>articles</code> database table and seeded default articles for blog posts."];
+
+            $artCount = (int) $pdo->query("SELECT COUNT(*) FROM articles")->fetchColumn();
+            if ($artCount === 0) {
+                $insArt = $pdo->prepare("INSERT INTO articles (title, bangla_title, slug, category, image, excerpt, content, author_name, author_role, author_avatar, read_time, tags, related_category_slug, is_published, is_featured, published_at, created_at, updated_at) VALUES (:title, :bangla_title, :slug, :category, :image, :excerpt, :content, :author_name, :author_role, :author_avatar, :read_time, :tags, :related_category_slug, :is_published, :is_featured, :published_at, datetime('now'), datetime('now'))");
+
+                $defaults = [
+                    [
+                        'title' => 'Kids Room Study Set: How to Create an Inspiring Learning Corner',
+                        'bangla_title' => 'বাচ্চাদের পড়ার ঘর সাজানোর আধুনিক আইডিয়া ও সঠিক স্টাডি সেট নির্বাচন',
+                        'slug' => 'kids-room-study-set-design-guide',
+                        'category' => 'Kids Room',
+                        'image' => 'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1200&auto=format&fit=crop',
+                        'excerpt' => 'A dedicated, child-friendly study space nurtures focus, good posture, and creativity. Learn how to choose the right ergonomic desk, rounded-edge furniture, and non-toxic materials.',
+                        'content' => '<p>Designing a study environment for children requires a delicate balance of ergonomic comfort, safety, and visual stimulation. When children have a dedicated workspace tailored to their height and natural habits, their attention span and excitement for learning increase remarkably.</p><h3>1. Prioritizing Safety: Rounded Corners & Non-Toxic Finishes</h3><p>Children are naturally active. When choosing study tables and storage shelves for kids, always verify that the edges are smoothly beveled or rounded. Avoid sharp 90-degree corners that pose collision hazards.</p><h3>2. Strategic Lighting: Preventing Eye Fatigue</h3><p>Position the study desk adjacent to a natural light source rather than directly facing it, preventing excessive glare.</p><h3>3. Smart Storage to Minimize Clutter</h3><p>A cluttered desk easily distracts younger minds. Incorporate vertical pegboards, shallow drawers with dividers, and low-height cubby shelves.</p>',
+                        'author_name' => 'Ar. Tanzila Rahman',
+                        'author_role' => 'Senior Interior Architect',
+                        'author_avatar' => 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop',
+                        'read_time' => '5 min read',
+                        'tags' => json_encode(['Kids Furniture', 'Study Desk', 'Ergonomics', 'Interior Design']),
+                        'related_category_slug' => 'classroom-furniture',
+                        'is_published' => 1,
+                        'is_featured' => 1,
+                        'published_at' => date('Y-m-d H:i:s', strtotime('-1 day')),
+                    ],
+                    [
+                        'title' => 'Chef Pro Kitchen Cabinet: Planning the Perfect Modular Kitchen Layout',
+                        'bangla_title' => 'মডুলার কিচেন ক্যাবিনেটের সঠিক পরিকল্পনা ও স্থায়িত্ব বৃদ্ধির গাইড',
+                        'slug' => 'modern-kitchen-cabinet-planning-guide',
+                        'category' => 'Kitchen Furniture',
+                        'image' => 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?q=80&w=1200&auto=format&fit=crop',
+                        'excerpt' => 'A great kitchen combines the work triangle principle, moisture-resistant carcass materials, and high-quality soft-close hardware to deliver decades of seamless culinary enjoyment.',
+                        'content' => '<p>The kitchen is undoubtedly the operational heart of any modern home. Whether cooking quick weekday meals or hosting festive family banquets, your kitchen cabinetry dictates the flow, efficiency, and cleanliness of your daily routine.</p><h3>1. Mastering the Kitchen Work Triangle</h3><p>The golden rule of kitchen ergonomics is the Work Triangle connecting the Refrigerator, Sink, and Cooktop.</p><h3>2. Moisture & Heat Resistance in Bangladesh</h3><p>Given our climate high humidity and heavy spices, opt for Marine-grade HMR board or Stainless Steel 304 grade for sink base units.</p><h3>3. Upper vs. Base Cabinets: Maximum Storage Utility</h3><p>Modern kitchens favor deep tandem drawers over traditional swing-door lower cabinets.</p>',
+                        'author_name' => 'Engr. Rafiqul Islam',
+                        'author_role' => 'Modular Kitchen Specialist',
+                        'author_avatar' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop',
+                        'read_time' => '6 min read',
+                        'tags' => json_encode(['Modular Kitchen', 'Kitchen Cabinets', 'Storage', 'Stainless Steel']),
+                        'related_category_slug' => 'kitchen-essentials',
+                        'is_published' => 1,
+                        'is_featured' => 0,
+                        'published_at' => date('Y-m-d H:i:s', strtotime('-7 days')),
+                    ],
+                    [
+                        'title' => 'Fortress Biometric Digital Safe: Protecting What Truly Matters at Home',
+                        'bangla_title' => 'বাসার নিরাপত্তা ও মূল্যবান সামগ্রী সংরক্ষণে ডিজিটাল স্মার্ট লকার নির্বাচন',
+                        'slug' => 'fortress-biometric-digital-safe-security-guide',
+                        'category' => 'Storage & Shelves',
+                        'image' => 'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=1200&auto=format&fit=crop',
+                        'excerpt' => 'Modern home security blends heavy-gauge cold rolled steel, optical fingerprint sensors, and discreet closet integration to safeguard precious jewelry, passports, and vital deeds.',
+                        'content' => '<p>In an unpredictable world, keeping your essential family assets in an ordinary wardrobe drawer leaves them vulnerable to theft and accidental loss. A biometric home safe provides peace of mind with instant single-touch access.</p><h3>1. Advanced Biometric Scanning vs. Keypads</h3><p>Biometric fingerprint scanners offer swift 0.5-second access without the risk of forgetting a code or losing a physical key.</p><h3>2. Installation Is Everything</h3><p>A safe is only as secure as its anchoring. Always anchor your digital safe into a solid concrete floor or structural wall stud using hardened expansion anchor bolts.</p>',
+                        'author_name' => 'Security Advisory Team',
+                        'author_role' => 'Home Safety Specialists',
+                        'author_avatar' => 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop',
+                        'read_time' => '4 min read',
+                        'tags' => json_encode(['Digital Safe', 'Home Security', 'Smart Locker', 'Storage']),
+                        'related_category_slug' => 'storage-organizer',
+                        'is_published' => 1,
+                        'is_featured' => 0,
+                        'published_at' => date('Y-m-d H:i:s', strtotime('-14 days')),
+                    ],
+                ];
+
+                foreach ($defaults as $d) {
+                    $insArt->execute($d);
+                }
+                $results[] = ['type' => 'success', 'msg' => "✅ Created <code>articles</code> database table and seeded " . count($defaults) . " default blog posts."];
+            } else {
+                $results[] = ['type' => 'success', 'msg' => "✅ Database table <code>articles</code> is active with {$artCount} article(s) ready for blog posting."];
+            }
+        } catch (\Throwable $e) {
+            $results[] = ['type' => 'warning', 'msg' => "Articles table check notice: " . $e->getMessage()];
         }
 
         if ($cleanedRows > 0) {

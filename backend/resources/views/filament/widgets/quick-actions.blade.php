@@ -58,6 +58,16 @@
                     <span>Coupons</span>
                 </a>
 
+                <!-- Articles & Blog -->
+                <a href="/admin/articles" 
+                   style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 10px; background: rgba(255,255,255,0.08); color: #f5f5f4; font-size: 12px; font-weight: 600; text-decoration: none; border: 1px solid rgba(255,255,255,0.15); transition: background 0.15s ease;"
+                   onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
+                    <svg style="width: 15px; height: 15px; color: #38bdf8;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                    </svg>
+                    <span>Articles & Blog</span>
+                </a>
+
                 <!-- Contact & Floating Chat Settings -->
                 <a href="/admin/manage-settings" 
                    style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 10px; background: rgba(255,255,255,0.08); color: #f5f5f4; font-size: 12px; font-weight: 600; text-decoration: none; border: 1px solid rgba(255,255,255,0.15); transition: background 0.15s ease;"

@@ -26,8 +26,8 @@ class ArticleForm
                         ->required()
                         ->maxLength(255)
                         ->live(onBlur: true)
-                        ->afterStateUpdated(function ($state, $set, $operation) {
-                            if ($operation === 'create') {
+                        ->afterStateUpdated(function ($set, ?string $state, ?string $operation) {
+                            if ($operation === 'create' && filled($state)) {
                                 $set('slug', Str::slug($state));
                             }
                         })
