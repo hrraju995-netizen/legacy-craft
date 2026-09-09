@@ -23,26 +23,33 @@ export default function ProductBrowser({
   initialQuery = "",
 }) {
   const [selectedSort, setSelectedSort] = useState(initialSort);
+  const [selectedCategory, setSelectedCategory] = useState(lockedCategory || "");
+  const [selectedRoom, setSelectedRoom] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedPriceRanges, setSelectedPriceRanges] = useState([]);
   const [selectedSubcategory, setSelectedSubcategory] =
     useState(initialSubcategory);
   const [query, setQuery] = useState(initialQuery);
 
-  // Deep links (?sub=, ?sort=, ?q=) are applied after mount.
+  // Deep links (?category=, ?room=, ?sub=, ?sort=, ?q=) are applied after mount.
   // Reading them on the server would force dynamic rendering, and
   // useSearchParams() would need a Suspense boundary — either one puts the
   // route back into streaming mode, which is what turned notFound() into a
   // soft 404 (HTTP 200) for unknown slugs.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    const cat = params.get("category");
+    const room = params.get("room");
     const sub = params.get("sub");
     const sort = params.get("sort");
     const q = params.get("q");
+
+    if (cat && !lockedCategory) setSelectedCategory(cat);
+    if (room) setSelectedRoom(room);
     if (sub) setSelectedSubcategory(sub);
     if (sort) setSelectedSort(sort);
     if (q) setQuery(q);
-  }, []);
+  }, [lockedCategory]);
 
   const handlePriceRangeChange = (index) =>
     setSelectedPriceRanges((prev) =>
@@ -50,6 +57,8 @@ export default function ProductBrowser({
     );
 
   const resetFilters = () => {
+    if (!lockedCategory) setSelectedCategory("");
+    setSelectedRoom("");
     setSelectedSize("");
     setSelectedPriceRanges([]);
     setSelectedSubcategory("");
@@ -61,7 +70,8 @@ export default function ProductBrowser({
     () =>
       sortProducts(
         filterProducts(products, {
-          category: lockedCategory,
+          category: lockedCategory || selectedCategory,
+          room: selectedRoom,
           subcategory: selectedSubcategory,
           size: selectedSize,
           priceRanges: selectedPriceRanges,
@@ -72,6 +82,8 @@ export default function ProductBrowser({
     [
       products,
       lockedCategory,
+      selectedCategory,
+      selectedRoom,
       selectedSubcategory,
       selectedSize,
       selectedPriceRanges,

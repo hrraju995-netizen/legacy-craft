@@ -840,14 +840,20 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
                                 <div className="space-y-1.5">
                                     {(() => {
                                         const currentCat = categories.find((c) => c.name === selectedCategory);
-                                        const subItems = currentCat?.children?.length
-                                            ? currentCat.children
-                                            : (storageItems.flat() || []);
+                                        const subItems = currentCat?.children || [];
+
+                                        if (subItems.length === 0) {
+                                            return (
+                                                <div className="py-6 text-center text-xs text-gray-500 bg-gray-50 rounded-xl px-4">
+                                                    Tap <strong>View All {selectedCategory}</strong> above to see all products in this category.
+                                                </div>
+                                            );
+                                        }
 
                                         return subItems.map((item, idx) => (
                                             <Link
                                                 key={idx}
-                                                href={item.slug ? `/products?category=${item.slug}` : searchHref(item.name)}
+                                                href={`/categories/${currentCat?.slug || item.slug}${item.slug ? `?sub=${encodeURIComponent(item.slug)}` : ""}`}
                                                 onClick={handleCloseMobileMenu}
                                                 className="flex items-center justify-between py-2.5 px-3 rounded-xl text-sm text-gray-700 hover:bg-gray-50 border border-gray-50 hover:border-gray-200 transition-colors"
                                             >

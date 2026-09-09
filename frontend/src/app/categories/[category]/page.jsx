@@ -61,7 +61,7 @@ export default async function CategoryPage({ params }) {
 
   return (
     <ProductBrowser
-      products={products}
+      products={scoped}
       lockedCategory={slug}
       subCategories={getSubcategoriesFrom(scoped)}
       title={category.title}
