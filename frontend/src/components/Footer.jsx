@@ -14,6 +14,7 @@ import { siteConfig } from "@/config/site";
 const companyLinks = [
   { label: "About Us", href: "/about" },
   { label: "Contact Us", href: "/contact" },
+  { label: "Blog & Insights", href: "/blog" },
   { label: "All Products", href: "/products" },
   { label: "Shop by Category", href: "/categories" },
 ];

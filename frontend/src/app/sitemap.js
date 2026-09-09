@@ -1,11 +1,12 @@
 import { getAllProducts, getCategories } from "@/lib/api";
 import { siteConfig } from "@/config/site";
+import { BLOG_POSTS } from "@/lib/blogs";
 
 export default async function sitemap() {
   const base = siteConfig.url;
   const now = new Date();
 
-  const staticRoutes = ["", "/products", "/categories", "/about", "/contact"].map(
+  const staticRoutes = ["", "/products", "/categories", "/about", "/contact", "/blog"].map(
     (path) => ({
       url: `${base}${path}`,
       lastModified: now,
@@ -13,6 +14,13 @@ export default async function sitemap() {
       priority: path === "" ? 1 : 0.8,
     })
   );
+
+  const blogRoutes = BLOG_POSTS.map((post) => ({
+    url: `${base}/blog/${post.slug}`,
+    lastModified: now,
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }));
 
   let categories = [];
   let products = [];
@@ -55,5 +63,5 @@ export default async function sitemap() {
       };
     });
 
-  return [...staticRoutes, ...categoryRoutes, ...productRoutes];
+  return [...staticRoutes, ...categoryRoutes, ...productRoutes, ...blogRoutes];
 }

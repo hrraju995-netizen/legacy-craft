@@ -244,9 +244,9 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
     ];
 
     const inspirationData = [
-        { title: "Small Apartment Design Ideas", image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=200&h=130&fit=crop" },
-        { title: "Modern Minimalist Bedroom Setup", image: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=200&h=130&fit=crop" },
-        { title: "Productive Home Office Aesthetic", image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=200&h=130&fit=crop" },
+        { title: "Kids Room Study Set Design Ideas", image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=200&h=130&fit=crop", href: "/blog/kids-room-study-set-design-guide" },
+        { title: "Modern Kitchen Cabinet Planning", image: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=200&h=130&fit=crop", href: "/blog/modern-kitchen-cabinet-planning-guide" },
+        { title: "Small Apartment Space-Saving Furniture", image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=200&h=130&fit=crop", href: "/blog/smart-space-saving-furniture-apartments" },
     ];
 
     const supportData = [
@@ -711,7 +711,7 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <div className="grid grid-cols-3 gap-6">
                                 {inspirationData.map((item, idx) => (
-                                    <Link key={idx} href={searchHref(item.title)} className="group flex gap-4 items-center p-2 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all">
+                                    <Link key={idx} href={item.href || "/blog"} className="group flex gap-4 items-center p-2 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all">
                                         <Image
                                             src={item.image}
                                             alt={item.title}
@@ -1100,7 +1100,7 @@ const Navbar = ({ logo, headerMenu = [], apiCategories = [], apiRooms = [] }) =>
                                 {inspirationData.map((item, idx) => (
                                     <Link
                                         key={idx}
-                                        href={searchHref(item.title)}
+                                        href={item.href || "/blog"}
                                         onClick={handleCloseMobileMenu}
                                         className="flex gap-3 items-center p-2 border border-gray-100 rounded-xl hover:bg-gray-50 bg-white"
                                     >
