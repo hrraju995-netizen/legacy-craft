@@ -32,7 +32,7 @@ class LookbookForm
                         ->required()
                         ->live(onBlur: true)
                         ->afterStateUpdated(function ($state, $set, $operation) {
-                            if ($operation === 'create' || blank($set('slug', null))) {
+                            if ($operation === 'create') {
                                 $set('slug', Str::slug($state));
                             }
                         })
@@ -41,7 +41,8 @@ class LookbookForm
                     TextInput::make('slug')
                         ->label('Slug / URL Identifier')
                         ->helperText('Automatically generated from title.')
-                        ->unique(ignoreRecord: true),
+                        ->required()
+                        ->unique(\App\Models\Lookbook::class, 'slug', ignoreRecord: true),
 
                     FileUpload::make('image')
                         ->label('Room Photo')
@@ -100,6 +101,7 @@ class LookbookForm
 
                             Select::make('position_preset')
                                 ->label('Quick Position')
+                                ->dehydrated(false)
                                 ->options([
                                     'custom' => 'Custom Coordinates',
                                     'center' => 'Center — X: 50%, Y: 50%',

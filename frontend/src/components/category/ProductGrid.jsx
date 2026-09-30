@@ -8,11 +8,15 @@ import { toast } from "react-toastify";
 import { ShoppingBag, Heart, Eye, Star, Truck } from "lucide-react";
 import { IoBag } from "react-icons/io5";
 import { useCartStore } from "@/store/useCartStore"; 
+import { useThemeStore } from "@/store/useThemeStore";
 
 import { FALLBACK_IMAGE } from "@/lib/catalog";
 
 const ProductCard = ({ product }) => {
   const router = useRouter();
+  const theme = useThemeStore((state) => state.theme);
+  const cartBtnText = theme?.cart_button_text || "Add to Cart";
+  const buyNowBtnText = theme?.buy_now_button_text || "Buy Now";
   const addToCart = useCartStore((state) => state.addToCart);
   const wishlist = useCartStore((state) => state.wishlist);
   const toggleWishlist = useCartStore((state) => state.toggleWishlist);
@@ -119,19 +123,19 @@ const ProductCard = ({ product }) => {
               type="button"
               disabled={isOutOfStock}
               onClick={handleAddToCart}
-              className="w-full bg-black text-white text-xs font-semibold py-2 rounded-lg flex items-center justify-center gap-1.5 hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition shadow-md cursor-pointer"
+              className="w-full btn-theme-cart text-xs font-semibold py-2 flex items-center justify-center gap-1.5 disabled:bg-gray-400 disabled:cursor-not-allowed transition shadow-md cursor-pointer"
             >
               <ShoppingBag className="w-3.5 h-3.5" />
-              Add to Cart
+              {cartBtnText}
             </button>
             <button
               type="button"
               disabled={isOutOfStock}
               onClick={handleBuyNow}
-              className="w-full bg-amber-500 text-black text-xs font-bold py-2 rounded-lg flex items-center justify-center gap-1.5 hover:bg-amber-400 disabled:bg-gray-300 disabled:cursor-not-allowed transition shadow-md cursor-pointer"
+              className="w-full btn-theme-buy text-xs font-bold py-2 flex items-center justify-center gap-1.5 disabled:bg-gray-300 disabled:cursor-not-allowed transition shadow-md cursor-pointer"
             >
               <IoBag className="w-3.5 h-3.5 fill-current" />
-              Buy Now
+              {buyNowBtnText}
             </button>
           </div>
         </div>
@@ -180,7 +184,7 @@ const ProductCard = ({ product }) => {
               type="button"
               disabled={isOutOfStock}
               onClick={handleAddToCart}
-              className="md:hidden p-1.5 bg-black text-white rounded-md disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-gray-800 transition cursor-pointer"
+              className="md:hidden p-1.5 btn-theme-cart text-white rounded-md disabled:bg-gray-300 disabled:cursor-not-allowed transition cursor-pointer"
               aria-label="Add to cart"
             >
               <ShoppingBag className="w-3.5 h-3.5" />

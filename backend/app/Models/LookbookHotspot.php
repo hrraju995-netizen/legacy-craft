@@ -9,7 +9,12 @@ class LookbookHotspot extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'lookbook_id',
+        'product_id',
+        'x',
+        'y',
+    ];
 
     protected $casts = ['x' => 'float', 'y' => 'float'];
 

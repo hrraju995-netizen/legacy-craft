@@ -4,6 +4,57 @@
   max-width: 1650px;
   margin: 0 auto;
 }
+
+:root {
+  --theme-primary: #9f582c;
+  --theme-secondary: #1e293b;
+  --theme-accent: #d97706;
+  --theme-cart-btn: #1e293b;
+  --theme-cart-btn-text: #ffffff;
+  --theme-cart-btn-hover: #000000;
+  --theme-buy-btn: #9f582c;
+  --theme-buy-btn-text: #ffffff;
+  --theme-topbar-bg: #9f582c;
+  --theme-topbar-text: #ffffff;
+  --theme-btn-radius: 9999px;
+  --theme-font-body: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --theme-font-heading: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
 @theme {
-  --color-primary: #9f582c;
+  --color-primary: var(--theme-primary, #9f582c);
+  --color-secondary: var(--theme-secondary, #1e293b);
+  --color-accent: var(--theme-accent, #d97706);
+}
+
+body {
+  font-family: var(--theme-font-body);
+  letter-spacing: -0.011em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--theme-font-heading);
+  letter-spacing: -0.02em;
+}
+
+.btn-theme-cart {
+  background-color: var(--theme-cart-btn, #1e293b) !important;
+  color: var(--theme-cart-btn-text, #ffffff) !important;
+  border-radius: var(--theme-btn-radius, 9999px) !important;
+  transition: all 0.2s ease-in-out;
+}
+.btn-theme-cart:hover {
+  background-color: var(--theme-cart-btn-hover, #000000) !important;
+}
+
+.btn-theme-buy {
+  background-color: var(--theme-buy-btn, var(--theme-primary, #9f582c)) !important;
+  color: var(--theme-buy-btn-text, #ffffff) !important;
+  border-radius: var(--theme-btn-radius, 9999px) !important;
+  transition: all 0.2s ease-in-out;
+}
+.btn-theme-buy:hover {
+  filter: brightness(0.92) !important;
 }

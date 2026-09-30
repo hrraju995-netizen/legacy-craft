@@ -28,6 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->errorNotifications(false)
             ->brandName(fn () => \App\Models\Setting::get('site_name', 'Legacy Craft Studio'))
             ->brandLogo(function () {
                 $siteName = \App\Models\Setting::get('site_name', 'Legacy Craft Studio');

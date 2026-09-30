@@ -23,10 +23,14 @@ import {
   XCircle,
 } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
+import { useThemeStore } from "@/store/useThemeStore";
 import ProductGrid from "@/components/category/ProductGrid";
 import { formatTk, SHIPPING_OPTIONS } from "@/config/site";
 
 export default function ProductDetails({ product, related = [] }) {
+  const theme = useThemeStore((s) => s.theme);
+  const cartBtnText = theme?.cart_button_text || "Add to cart";
+  const buyNowBtnText = theme?.buy_now_button_text || "Buy it now";
   // NOTE: hooks must run unconditionally — the old version returned early
   // above them, which broke the Rules of Hooks. The server page now 404s
   // for unknown slugs, so `product` is always present here.
@@ -413,17 +417,17 @@ export default function ProductDetails({ product, related = [] }) {
                   type="button"
                   onClick={handleAddToCart}
                   disabled={!isAvailable}
-                  className="w-full bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-full flex items-center justify-center gap-2 transition-all shadow-md active:scale-98 cursor-pointer"
+                  className="w-full btn-theme-cart disabled:bg-gray-300 disabled:cursor-not-allowed font-bold py-3.5 flex items-center justify-center gap-2 transition-all shadow-md active:scale-98 cursor-pointer"
                 >
-                  <ShoppingCart className="w-4 h-4" /> Add to cart
+                  <ShoppingCart className="w-4 h-4" /> {cartBtnText}
                 </button>
                 <button
                   type="button"
                   onClick={handleBuyNow}
                   disabled={!isAvailable}
-                  className="w-full bg-primary hover:opacity-90 disabled:bg-gray-200 disabled:cursor-not-allowed text-white font-extrabold py-3.5 rounded-full flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98 cursor-pointer"
+                  className="w-full btn-theme-buy disabled:bg-gray-200 disabled:cursor-not-allowed font-extrabold py-3.5 flex items-center justify-center gap-2 transition-all shadow-sm active:scale-98 cursor-pointer"
                 >
-                  <Zap className="w-4 h-4 fill-current" /> Buy it now
+                  <Zap className="w-4 h-4 fill-current" /> {buyNowBtnText}
                 </button>
                 <button
                   type="button"

@@ -50,6 +50,7 @@ class SiteController extends Controller
                 'social' => Setting::group('social'),
                 'checkout' => Setting::group('checkout'),
                 'chat' => Setting::group('chat'),
+                'theme' => Setting::group('theme'),
             ],
             'menus' => Menu::where('is_active', true)->with('items.children')->get()
                 ->mapWithKeys(fn (Menu $menu) => [

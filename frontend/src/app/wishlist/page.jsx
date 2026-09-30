@@ -6,12 +6,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Trash2, ShoppingCart, Heart, ArrowLeft, ShoppingBag, Zap } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
+import { useThemeStore } from "@/store/useThemeStore";
 import { toast } from "react-toastify";
 import { IoBag } from "react-icons/io5";
 import { formatTk } from "@/config/site";
 
 export default function WishlistPage() {
   const { wishlist, toggleWishlist, addToCart } = useCartStore();
+  const theme = useThemeStore((state) => state.theme);
+  const cartBtnText = theme?.cart_button_text || "Add to Cart";
+  const buyNowBtnText = theme?.buy_now_button_text || "Buy Now";
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
 
@@ -145,17 +149,17 @@ export default function WishlistPage() {
                   {/* Add to Cart Button */}
                   <button
                     onClick={() => handleAddToCart(item)}
-                    className="w-full flex items-center justify-center gap-2 bg-black hover:bg-gray-800 text-white text-xs sm:text-sm font-semibold py-3 rounded-xl transition-all active:scale-95 cursor-pointer shadow-xs"
+                    className="w-full flex items-center justify-center gap-2 btn-theme-cart text-xs sm:text-sm font-semibold py-3 transition-all active:scale-95 cursor-pointer shadow-xs"
                   >
-                    <ShoppingCart className="w-4 h-4" /> Add to Cart
+                    <ShoppingCart className="w-4 h-4" /> {cartBtnText}
                   </button>
 
                   {/* Buy Now Button */}
                   <button
                     onClick={() => handleBuyNow(item)}
-                    className="w-full flex items-center justify-center gap-2 bg-primary text-white hover:opacity-90 text-xs sm:text-sm font-semibold py-3 rounded-xl transition-all active:scale-95 cursor-pointer shadow-xs"
+                    className="w-full flex items-center justify-center gap-2 btn-theme-buy text-xs sm:text-sm font-semibold py-3 transition-all active:scale-95 cursor-pointer shadow-xs"
                   >
-                    <IoBag  className="w-4 h-4 fill-current text-white" /> Buy Now
+                    <IoBag className="w-4 h-4 fill-current text-white" /> {buyNowBtnText}
                   </button>
                 </div>
               </div>

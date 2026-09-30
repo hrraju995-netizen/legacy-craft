@@ -169,3 +169,35 @@ Route::get('/admin-storage-link', function () {
     return response()->json($results, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 });
 
+/**
+ * Quick Admin Account Inspector & Reset Route
+ */
+Route::get('/admin-user-reset', function (\Illuminate\Http\Request $request) {
+    $email = $request->query('email', 'admin@lookstudiobd.com');
+    $password = $request->query('password', 'admin1234');
+
+    $user = \App\Models\User::updateOrCreate(
+        ['email' => $email],
+        [
+            'name' => 'Store Admin',
+            'password' => \Illuminate\Support\Facades\Hash::make($password),
+            'role' => 'admin',
+            'is_active' => true,
+        ]
+    );
+
+    $allUsers = \App\Models\User::select('id', 'name', 'email', 'role', 'is_active')->get();
+
+    return response()->json([
+        'status' => 'success',
+        'message' => "Admin user verified / reset for: {$email}",
+        'credentials' => [
+            'email' => $email,
+            'password' => $password,
+            'role' => 'admin',
+        ],
+        'admin_login_url' => url('/admin/login'),
+        'all_users_in_db' => $allUsers,
+    ], 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+});
+

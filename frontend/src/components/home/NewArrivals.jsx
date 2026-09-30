@@ -6,11 +6,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, ShoppingCart, Heart, Zap } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
+import { useThemeStore } from "@/store/useThemeStore";
 import { IoBag } from "react-icons/io5";
 import { toast } from "react-toastify";
 
 const ProductCard = ({ item }) => {
   const router = useRouter();
+  const theme = useThemeStore((state) => state.theme);
+  const cartBtnText = theme?.cart_button_text || "Add to Cart";
+  const buyNowBtnText = theme?.buy_now_button_text || "Buy Now";
   const [currentImage, setCurrentImage] = useState(item.thumbnail || item.image);
 
   const addToCart = useCartStore((state) => state.addToCart);
@@ -161,22 +165,22 @@ const ProductCard = ({ item }) => {
           <button
             type="button"
             onClick={handleAddToCart}
-            className="w-full py-2.5 px-4 rounded-md bg-black text-white text-xs font-semibold hover:bg-primary active:scale-[0.98] transition-all duration-300 shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-2.5 px-4 btn-theme-cart text-xs font-semibold active:scale-[0.98] transition-all duration-300 shadow-sm flex items-center justify-center gap-2 cursor-pointer"
             aria-label="Add to cart"
           >
-            <ShoppingCart className="w-3.5 h-3.5 text-white cursor-pointer" />
-            <span>Add to Cart</span>
+            <ShoppingCart className="w-3.5 h-3.5 cursor-pointer" />
+            <span>{cartBtnText}</span>
           </button>
 
           {/* Buy Now Button */}
           <button
             type="button"
             onClick={handleBuyNow}
-            className="w-full py-2.5 px-4 rounded-md bg-primary text-white text-xs font-semibold hover:bg-black active:scale-[0.98] transition-all duration-300 shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-2.5 px-4 btn-theme-buy text-xs font-semibold active:scale-[0.98] transition-all duration-300 shadow-sm flex items-center justify-center gap-2 cursor-pointer"
             aria-label="Buy now"
           >
-            <IoBag className="w-3.5 h-3.5 text-white fill-white cursor-pointer" />
-            <span>Buy Now</span>
+            <IoBag className="w-3.5 h-3.5 fill-current cursor-pointer" />
+            <span>{buyNowBtnText}</span>
           </button>
         </div>
       </div>

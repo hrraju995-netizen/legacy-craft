@@ -7,6 +7,7 @@ import Topbar from "@/components/Topbar";
 import { ToastContainer } from "react-toastify";
 import FloatingChat from "@/components/FloatingChat";
 import AdminMenuBar from "@/components/AdminMenuBar";
+import ThemeInitializer from "@/components/ThemeInitializer";
 import { siteConfig } from "@/config/site";
 import { getCategories, getHomeData, getSiteConfig } from "@/lib/api";
 
@@ -97,8 +98,6 @@ export const viewport = {
 };
 
 export default async function RootLayout({ children }) {
-  // Fetched once per revalidation window and shared by the header and footer,
-  // so the chrome is admin-controlled instead of hard-coded.
   const [categories, home, site] = await Promise.all([
     getCategories(),
     getHomeData(),
@@ -106,8 +105,39 @@ export default async function RootLayout({ children }) {
   ]);
 
   const general = site?.settings?.general ?? {};
+  const theme = site?.settings?.theme ?? {};
 
-  // Fix logo URL if server returns localhost-based URL (APP_URL not set on server)
+  const primaryColor = theme.primary_color || "#9f582c";
+  const secondaryColor = theme.secondary_color || "#1e293b";
+  const accentColor = theme.accent_color || "#d97706";
+  const cartBtnBg = theme.cart_button_color || "#1e293b";
+  const cartBtnText = theme.cart_button_text_color || "#ffffff";
+  const cartBtnHover = theme.cart_button_hover_color || "#000000";
+  const buyBtnBg = theme.buy_now_button_color || primaryColor;
+  const buyBtnText = theme.buy_now_button_text_color || "#ffffff";
+  const topbarBg = theme.topbar_bg_color || primaryColor;
+  const topbarText = theme.topbar_text_color || "#ffffff";
+  const bodyFont = theme.body_font || "Plus Jakarta Sans";
+  const headingFont = theme.heading_font || "Plus Jakarta Sans";
+
+  const radiusMap = {
+    full: "9999px",
+    xl: "16px",
+    lg: "12px",
+    md: "8px",
+    none: "0px",
+  };
+  const buttonRadius = radiusMap[theme.button_radius] || "9999px";
+
+  const googleFontsUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(
+    bodyFont
+  )}:ital,wght@0,300..800;1,300..800${
+    headingFont !== bodyFont
+      ? `&family=${encodeURIComponent(headingFont)}:ital,wght@0,300..800;1,300..800`
+      : ""
+  }&display=swap`;
+
+  // Fix logo URL if server returns localhost-based URL
   const fixUrl = (url) => {
     if (!url) return url;
     if (url.startsWith("http://api.lookstudiobd.com")) {
@@ -143,8 +173,71 @@ export default async function RootLayout({ children }) {
         <link rel="icon" href={activeFavicon} type={activeFaviconType} />
         <link rel="shortcut icon" href={activeFavicon} type={activeFaviconType} />
         <link rel="apple-touch-icon" href={activeFavicon} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href={googleFontsUrl} rel="stylesheet" />
+        <style
+          id="theme-dynamic-styles"
+          dangerouslySetInnerHTML={{
+            __html: `
+              :root {
+                --theme-primary: ${primaryColor};
+                --color-primary: ${primaryColor};
+                --theme-secondary: ${secondaryColor};
+                --color-secondary: ${secondaryColor};
+                --theme-accent: ${accentColor};
+                --color-accent: ${accentColor};
+                --theme-cart-btn: ${cartBtnBg};
+                --theme-cart-btn-text: ${cartBtnText};
+                --theme-cart-btn-hover: ${cartBtnHover};
+                --theme-buy-btn: ${buyBtnBg};
+                --theme-buy-btn-text: ${buyBtnText};
+                --theme-topbar-bg: ${topbarBg};
+                --theme-topbar-text: ${topbarText};
+                --theme-btn-radius: ${buttonRadius};
+                --theme-font-body: '${bodyFont}', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                --theme-font-heading: '${headingFont}', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              }
+              body {
+                font-family: var(--theme-font-body) !important;
+              }
+              h1, h2, h3, h4, h5, h6, .font-heading {
+                font-family: var(--theme-font-heading) !important;
+              }
+              .bg-primary {
+                background-color: var(--theme-primary) !important;
+              }
+              .text-primary {
+                color: var(--theme-primary) !important;
+              }
+              .border-primary {
+                border-color: var(--theme-primary) !important;
+              }
+              .ring-primary {
+                --tw-ring-color: var(--theme-primary) !important;
+              }
+              .btn-theme-cart {
+                background-color: var(--theme-cart-btn) !important;
+                color: var(--theme-cart-btn-text) !important;
+                border-radius: var(--theme-btn-radius) !important;
+              }
+              .btn-theme-cart:hover {
+                background-color: var(--theme-cart-btn-hover) !important;
+              }
+              .btn-theme-buy {
+                background-color: var(--theme-buy-btn) !important;
+                color: var(--theme-buy-btn-text) !important;
+                border-radius: var(--theme-btn-radius) !important;
+              }
+              .btn-theme-buy:hover {
+                filter: brightness(0.92) !important;
+              }
+            `,
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
+        <ThemeInitializer theme={theme} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}

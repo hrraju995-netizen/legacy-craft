@@ -12,7 +12,13 @@ const Topbar = ({ settings = {} }) => {
   if (!enabled) return null;
 
   return (
-    <div className="bg-primary text-white text-xs sm:text-sm py-4 px-4">
+    <div
+      className="text-xs sm:text-sm py-4 px-4 transition-colors"
+      style={{
+        backgroundColor: "var(--theme-topbar-bg, var(--theme-primary, #9f582c))",
+        color: "var(--theme-topbar-text, #ffffff)",
+      }}
+    >
       <div className="max-w-7xl mx-auto flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap text-center">
         <Phone className="w-4 h-4 fill-white stroke-none" />
 
