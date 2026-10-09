@@ -6,6 +6,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Color;
 use App\Models\Room;
+use App\Models\Size;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -213,7 +214,7 @@ class ProductForm
                 /* -------------------------------------------- Variants */
                 Tabs\Tab::make('Colours & Variants')->schema([
                     Section::make()
-                        ->description('Each colour becomes a separately buyable option. Leave empty for a single-option product.')
+                        ->description('Each colour and size combination becomes a separately buyable option. Leave empty for a single-option product.')
                         ->schema([
                             Repeater::make('variants')
                                 ->relationship()
@@ -221,7 +222,7 @@ class ProductForm
                                 ->orderColumn('position')
                                 ->reorderable()
                                 ->collapsible()
-                                ->itemLabel(fn (array $state) => $state['name'] ?? 'Variant')
+                                ->itemLabel(fn (array $state) => !empty($state['name']) ? $state['name'] : 'Variant')
                                 ->schema([
                                     Select::make('color_id')
                                         ->label('Colour')
@@ -236,15 +237,49 @@ class ProductForm
                                                 ->placeholder('#C89F6B'),
                                         ])
                                         ->live()
-                                        ->afterStateUpdated(function ($state, $set) {
-                                            if ($color = Color::find($state)) {
-                                                $set('name', $color->name);
+                                        ->afterStateUpdated(function ($state, $set, $get) {
+                                            $color = $state ? Color::find($state) : null;
+                                            $sizeId = $get('size_id');
+                                            $size = $sizeId ? Size::find($sizeId) : null;
+                                            $parts = array_filter([$color?->name, $size?->name]);
+                                            if (!empty($parts)) {
+                                                $set('name', implode(' - ', $parts));
+                                            }
+                                        }),
+
+                                    Select::make('size_id')
+                                        ->label('Size / Variation')
+                                        ->relationship('size', 'name')
+                                        ->searchable()
+                                        ->preload()
+                                        ->placeholder('Select or add custom size...')
+                                        ->createOptionForm([
+                                            TextInput::make('name')
+                                                ->label('Size Name / Variation')
+                                                ->placeholder('e.g. King (6\' × 7\'), Single, Large')
+                                                ->required(),
+                                            TextInput::make('dimensions')
+                                                ->label('Dimensions / Measurements (optional)')
+                                                ->placeholder('e.g. 6ft × 7ft or 72" × 84"'),
+                                        ])
+                                        ->live()
+                                        ->afterStateUpdated(function ($state, $set, $get) {
+                                            $size = $state ? Size::find($state) : null;
+                                            $colorId = $get('color_id');
+                                            $color = $colorId ? Color::find($colorId) : null;
+                                            $parts = array_filter([$color?->name, $size?->name]);
+                                            if (!empty($parts)) {
+                                                $set('name', implode(' - ', $parts));
                                             }
                                         }),
 
                                     TextInput::make('name')
                                         ->label('Variant name')
-                                        ->helperText('Defaults to the colour name.'),
+                                        ->helperText('Defaults to Colour - Size name.'),
+
+                                    TextInput::make('sku')
+                                        ->label('SKU (optional)')
+                                        ->placeholder('e.g. PRD-MEH-KING'),
 
                                     TextInput::make('price')
                                         ->label('Price override (৳)')
@@ -273,12 +308,14 @@ class ProductForm
                                         ->disk('public')
                                         ->directory('variants')
                                         ->visibility('public')
-                                        ->helperText('Optional photo of this colour.'),
+                                        ->helperText('Optional photo of this variant.'),
 
-                                    Toggle::make('is_active')->default(true),
+                                    Toggle::make('is_active')
+                                        ->label('Is active')
+                                        ->default(true),
                                 ])
                                 ->columns(2)
-                                ->addActionLabel('Add colour')
+                                ->addActionLabel('Add variant')
                                 ->columnSpanFull(),
                         ]),
                 ]),

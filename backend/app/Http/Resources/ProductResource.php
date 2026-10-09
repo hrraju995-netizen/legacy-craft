@@ -52,6 +52,7 @@ class ProductResource extends JsonResource
 
             'colors' => $this->whenLoaded('variants', fn () => $this->variants
                 ->where('is_active', true)
+                ->filter(fn ($v) => $v->color !== null || empty($v->size))
                 ->map(function ($v) {
                     $variantPrice = $v->price !== null ? (int) round($v->price / 100) : (int) round($this->price / 100);
                     $variantOriginalPrice = $v->compare_at_price !== null
@@ -71,10 +72,61 @@ class ProductResource extends JsonResource
                         'originalPrice' => $variantOriginalPrice,
                         'discountPercent' => $discountPercent,
                         'variantId' => $v->id,
+                        'sizeId' => $v->size_id,
+                        'sizeName' => $v->size?->name,
                         'stockQuantity' => $v->stock_quantity,
                         'inStock' => $v->stock_quantity > 0 || $this->in_stock,
                     ];
-                })->filter(fn ($c) => !empty($c['name']))->values()->all()),
+                })->unique('name')->values()->all()),
+
+            'sizes' => $this->whenLoaded('variants', function () {
+                return $this->variants
+                    ->where('is_active', true)
+                    ->filter(fn ($v) => $v->size !== null)
+                    ->map(fn ($v) => [
+                        'id' => $v->size->id,
+                        'name' => $v->size->name,
+                        'dimensions' => $v->size->dimensions,
+                        'price' => $v->price !== null ? (int) round($v->price / 100) : (int) round($this->price / 100),
+                        'originalPrice' => $v->compare_at_price !== null ? (int) round($v->compare_at_price / 100) : null,
+                        'inStock' => $v->stock_quantity > 0 || $this->in_stock,
+                    ])
+                    ->unique('id')
+                    ->values()->all();
+            }),
+
+            'variants' => $this->whenLoaded('variants', fn () => $this->variants
+                ->where('is_active', true)
+                ->map(function ($v) {
+                    $variantPrice = $v->price !== null ? (int) round($v->price / 100) : (int) round($this->price / 100);
+                    $variantOriginalPrice = $v->compare_at_price !== null
+                        ? (int) round($v->compare_at_price / 100)
+                        : ($this->compare_at_price ? (int) round($this->compare_at_price / 100) : null);
+
+                    $discountPercent = 0;
+                    if ($variantOriginalPrice && $variantOriginalPrice > $variantPrice) {
+                        $discountPercent = (int) round((($variantOriginalPrice - $variantPrice) / $variantOriginalPrice) * 100);
+                    }
+
+                    return [
+                        'id' => $v->id,
+                        'variantId' => $v->id,
+                        'name' => $v->display_name,
+                        'sku' => $v->sku,
+                        'colorId' => $v->color_id,
+                        'colorName' => $v->color?->name,
+                        'colorCode' => $v->color?->hex ?? '#cccccc',
+                        'sizeId' => $v->size_id,
+                        'sizeName' => $v->size?->name,
+                        'dimensions' => $v->size?->dimensions,
+                        'image' => Product::resolveImageUrl($v->image),
+                        'price' => $variantPrice,
+                        'originalPrice' => $variantOriginalPrice,
+                        'discountPercent' => $discountPercent,
+                        'stockQuantity' => $v->stock_quantity,
+                        'inStock' => $v->stock_quantity > 0 || $this->in_stock,
+                    ];
+                })->values()->all()),
 
             'material' => $this->material,
             'dimensions' => [

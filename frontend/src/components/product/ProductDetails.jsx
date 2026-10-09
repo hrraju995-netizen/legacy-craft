@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -44,6 +44,9 @@ export default function ProductDetails({ product, related = [] }) {
   const [selectedColor, setSelectedColor] = useState(
     product.colors?.[0]?.name || ""
   );
+  const [selectedSize, setSelectedSize] = useState(
+    product.sizes?.[0]?.name || ""
+  );
 
   // Modals & Drawers State
   const [isAllMediaOpen, setIsAllMediaOpen] = useState(false);
@@ -58,9 +61,10 @@ export default function ProductDetails({ product, related = [] }) {
     product.images && product.images.length > 0
       ? product.images
       : [product.thumbnail || FALLBACK_PRODUCT_IMAGE];
-  const variantImages = (product.colors || [])
-    .map((c) => c.image)
-    .filter((img) => typeof img === "string" && img.trim() !== "");
+  const variantImages = [
+    ...(product.colors || []).map((c) => c.image),
+    ...(product.variants || []).map((v) => v.image),
+  ].filter((img) => typeof img === "string" && img.trim() !== "");
 
   const filteredImages = Array.from(
     new Set([...rawBaseImages, ...variantImages])
@@ -69,8 +73,39 @@ export default function ProductDetails({ product, related = [] }) {
   const productImages =
     filteredImages.length > 0 ? filteredImages : [FALLBACK_PRODUCT_IMAGE];
 
-  // Find the active variant based on selectedColor
+  const variants = useMemo(() => product.variants || [], [product.variants]);
+
+  // Match the active variant based on selectedColor and selectedSize
+  const activeVariant = useMemo(() => {
+    if (!variants.length) return null;
+
+    if (selectedColor && selectedSize) {
+      const match = variants.find(
+        (v) =>
+          (v.colorName === selectedColor || !v.colorName) &&
+          (v.sizeName === selectedSize || !v.sizeName)
+      );
+      if (match) return match;
+    }
+
+    if (selectedSize) {
+      const match = variants.find((v) => v.sizeName === selectedSize);
+      if (match) return match;
+    }
+
+    if (selectedColor) {
+      const match = variants.find(
+        (v) => v.colorName === selectedColor || v.name === selectedColor
+      );
+      if (match) return match;
+    }
+
+    return variants[0] || null;
+  }, [variants, selectedColor, selectedSize]);
+
+  // Find the active variant based on activeVariant or fallback to color obj
   const activeColorObj =
+    activeVariant ||
     (product.colors || []).find((c) => c.name === selectedColor) ||
     product.colors?.[0] ||
     null;
@@ -89,19 +124,26 @@ export default function ProductDetails({ product, related = [] }) {
 
   const isWishlisted = wishlist.some((item) => item.id === product.id);
 
-  // Reset gallery + colour whenever a different product is rendered.
+  // Reset gallery + colour + size whenever a different product is rendered.
   useEffect(() => {
     const firstColor = product.colors?.[0];
+    const firstSize = product.sizes?.[0];
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedColor(firstColor?.name || "");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSelectedSize(firstSize?.name || "");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setQuantity(1);
 
     if (firstColor?.image) {
       const idx = productImages.indexOf(firstColor.image);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedImageIndex(idx !== -1 ? idx : 0);
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedImageIndex(0);
     }
-  }, [product]);
+  }, [product.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleColorSelect = (color) => {
     setSelectedColor(color.name);
@@ -113,23 +155,44 @@ export default function ProductDetails({ product, related = [] }) {
     }
   };
 
-  const cartPayload = () => ({
-    ...product,
-    productId: Number(product.id),
-    id: activeColorObj?.variantId
-      ? `${product.id}-v${activeColorObj.variantId}`
-      : product.id,
-    variantId: activeColorObj?.variantId,
-    price: activePrice,
-    originalPrice: activeOriginalPrice,
-    image:
-      activeColorObj?.image ||
-      productImages[selectedImageIndex] ||
-      product.thumbnail,
-    subtitle: selectedColor
-      ? `Color: ${selectedColor}`
-      : (product.subcategory || product.material),
-  });
+  const handleSizeSelect = (size) => {
+    setSelectedSize(size.name);
+    const matchingVar = variants.find(
+      (v) =>
+        v.sizeName === size.name &&
+        (!selectedColor || v.colorName === selectedColor)
+    );
+    if (matchingVar?.image) {
+      const idx = productImages.indexOf(matchingVar.image);
+      if (idx !== -1) setSelectedImageIndex(idx);
+    }
+  };
+
+  const cartPayload = () => {
+    const subtitleParts = [];
+    if (selectedColor) subtitleParts.push(`Color: ${selectedColor}`);
+    if (selectedSize) subtitleParts.push(`Size: ${selectedSize}`);
+    const subtitle =
+      subtitleParts.length > 0
+        ? subtitleParts.join(" | ")
+        : (product.subcategory || product.material);
+
+    return {
+      ...product,
+      productId: Number(product.id),
+      id: activeColorObj?.variantId
+        ? `${product.id}-v${activeColorObj.variantId}`
+        : product.id,
+      variantId: activeColorObj?.variantId,
+      price: activePrice,
+      originalPrice: activeOriginalPrice,
+      image:
+        activeColorObj?.image ||
+        productImages[selectedImageIndex] ||
+        product.thumbnail,
+      subtitle,
+    };
+  };
 
   const handleAddToCart = () => {
     if (!isAvailable) return;
@@ -366,6 +429,62 @@ export default function ProductDetails({ product, related = [] }) {
                             className="w-full h-full rounded-lg shadow-inner"
                             style={{ backgroundColor: color.code }}
                           />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Dynamic Sizes / Variations */}
+            {product.sizes && product.sizes.length > 0 && (
+              <div className="space-y-2.5">
+                <div className="text-xs font-semibold text-gray-700 flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-gray-500 uppercase tracking-wider text-[11px] font-bold">Size:</span>
+                    <span className="text-gray-900 font-bold">{selectedSize}</span>
+                  </div>
+                  {activeVariant?.dimensions && (
+                    <span className="text-[11px] text-gray-500 font-medium">
+                      Dimensions: {activeVariant.dimensions}
+                    </span>
+                  )}
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  {product.sizes.map((sizeOption, idx) => {
+                    const isSelected = selectedSize === sizeOption.name;
+                    return (
+                      <button
+                        key={sizeOption.id || idx}
+                        type="button"
+                        onClick={() => handleSizeSelect(sizeOption)}
+                        className={`group px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-200 border text-left cursor-pointer flex items-center gap-2 ${
+                          isSelected
+                            ? "bg-stone-900 text-white border-stone-900 shadow-sm ring-2 ring-stone-900/10"
+                            : "bg-white text-stone-700 border-stone-200 hover:border-stone-400 hover:bg-stone-50"
+                        }`}
+                      >
+                        <span>{sizeOption.name}</span>
+                        {sizeOption.dimensions && (
+                          <span
+                            className={`text-[10px] ${
+                              isSelected ? "text-stone-300" : "text-stone-400 font-normal"
+                            }`}
+                          >
+                            ({sizeOption.dimensions})
+                          </span>
+                        )}
+                        {sizeOption.price && sizeOption.price !== product.price && (
+                          <span
+                            className={`text-[10px] font-bold ml-1 px-1.5 py-0.5 rounded ${
+                              isSelected
+                                ? "bg-stone-800 text-amber-300"
+                                : "bg-stone-100 text-stone-600"
+                            }`}
+                          >
+                            Tk {sizeOption.price.toLocaleString()}
+                          </span>
                         )}
                       </button>
                     );

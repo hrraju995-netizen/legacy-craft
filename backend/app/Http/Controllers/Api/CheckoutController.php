@@ -75,7 +75,7 @@ class CheckoutController extends Controller
                         'product_variant_id' => $variant?->id,
                         'product_name' => $product->name,
                         'product_sku' => $variant?->sku ?? $product->sku,
-                        'variant_name' => $variant?->name ?? $variant?->color?->name,
+                        'variant_name' => $variant?->display_name ?? $variant?->name ?? $variant?->color?->name,
                         'product_image' => $variant?->image ?? $product->thumbnail,
                         'unit_price' => $unitPrice,
                         'quantity' => $quantity,

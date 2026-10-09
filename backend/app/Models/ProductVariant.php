@@ -25,9 +25,24 @@ class ProductVariant extends Model
         return $this->belongsTo(Color::class);
     }
 
+    public function size()
+    {
+        return $this->belongsTo(Size::class);
+    }
+
     /** Variants fall back to the parent product's price when unset. */
     public function getEffectivePriceAttribute(): int
     {
         return $this->price ?? $this->product->price;
+    }
+
+    public function getDisplayNameAttribute(): string
+    {
+        if (!empty($this->name)) {
+            return $this->name;
+        }
+
+        $parts = array_filter([$this->color?->name, $this->size?->name]);
+        return !empty($parts) ? implode(' - ', $parts) : 'Variant';
     }
 }

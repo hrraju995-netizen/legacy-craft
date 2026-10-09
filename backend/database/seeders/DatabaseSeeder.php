@@ -10,6 +10,7 @@ class DatabaseSeeder extends Seeder
     {
         // Catalogue first — SiteSeeder builds menus from the categories.
         $this->call([
+            SizeSeeder::class,
             CatalogSeeder::class,
             SiteSeeder::class,
             PartnerSeeder::class,

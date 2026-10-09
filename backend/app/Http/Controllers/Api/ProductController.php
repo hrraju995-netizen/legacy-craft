@@ -26,7 +26,7 @@ class ProductController extends Controller
 
         $query = Product::query()
             ->active()
-            ->with(['category', 'room', 'images', 'variants.color', 'tags']);
+            ->with(['category', 'room', 'images', 'variants.color', 'variants.size', 'tags']);
 
         $query->when($validated['category'] ?? null, fn ($q, $slug) => $q->whereHas(
             'category', fn ($c) => $c->where('slug', $slug)
@@ -71,7 +71,7 @@ class ProductController extends Controller
     {
         abort_unless($product->is_active, 404);
 
-        $product->load(['category', 'room', 'images', 'variants.color', 'tags', 'related.images']);
+        $product->load(['category', 'room', 'images', 'variants.color', 'variants.size', 'tags', 'related.images']);
 
         return (new ProductResource($product))->additional([
             'related' => ProductResource::collection($product->relatedProducts()),
